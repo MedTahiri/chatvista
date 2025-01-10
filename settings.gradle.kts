@@ -6,3 +6,6 @@
  */
 
 rootProject.name = "chatvista"
+
+include(":android")
+include(":backend")
