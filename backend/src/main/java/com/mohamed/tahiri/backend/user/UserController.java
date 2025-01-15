@@ -6,19 +6,34 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/user")
 public class UserController {
+
     @Autowired
     private UserService userService;
 
-    @GetMapping("user/users")
+    @GetMapping("/users")
     public List<User> allUsers() {
         return userService.allUsers();
     }
 
-    @GetMapping("user/random")
-    public User randomUser() {
-        User user = new User("Mohamed Tahiri", "mohamedttaahhiirrii2003@gmail.com", "12345678");
-        return userService.createUser(user);
+    @GetMapping("/{email}/{password}")
+    public User getUser(@PathVariable("email") String email, @PathVariable("password") String password) {
+        return userService.getUser(email, password);
     }
 
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable("id") Long id) {
+        return userService.getUserById(id);
+    }
+
+    @PostMapping("/new")
+    public User newUser(@RequestBody User user){
+        return userService.newUser(user);
+    }
+
+    @PutMapping("/update")
+    public User updateUser(@RequestBody User user){
+        return userService.updateUser(user);
+    }
 }
