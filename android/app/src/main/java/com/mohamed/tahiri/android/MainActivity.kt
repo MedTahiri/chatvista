@@ -3,7 +3,7 @@ package com.mohamed.tahiri.android
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -21,7 +21,13 @@ import com.mohamed.tahiri.android.view.ProfileScreen.ProfileScreen
 import com.mohamed.tahiri.android.view.SignupScreen.SignupScreen
 import com.mohamed.tahiri.android.view.SplashScreen.SplashScreen
 
+import com.mohamed.tahiri.android.viewmodel.UserViewModel
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private val userViewModel: UserViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
