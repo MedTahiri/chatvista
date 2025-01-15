@@ -12,15 +12,18 @@ public class User {
     private String fullName;
     private String email;
     private String password;
+    private String image;
 
     public User() {
 
     }
 
-    public User(String fullName, String email, String password) {
+    public User(Long id, String fullName, String email, String password, String image) {
+        this.id = id;
         this.fullName = fullName;
         this.email = email;
         this.password = password;
+        this.image = image;
     }
 
     public Long getId() {
@@ -54,4 +57,13 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
 }
