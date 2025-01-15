@@ -14,6 +14,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.mohamed.tahiri.android.ui.theme.AndroidTheme
+import com.mohamed.tahiri.android.view.HomeScreen.HomeScreen
+import com.mohamed.tahiri.android.view.LoginScreen.LoginScreen
+import com.mohamed.tahiri.android.view.MessagingScreen.MessagingScreen
+import com.mohamed.tahiri.android.view.ProfileScreen.ProfileScreen
+import com.mohamed.tahiri.android.view.SignupScreen.SignupScreen
+import com.mohamed.tahiri.android.view.SplashScreen.SplashScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
