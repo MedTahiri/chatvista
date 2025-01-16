@@ -1,6 +1,9 @@
 package com.mohamed.tahiri.backend.user;
 
+import com.mohamed.tahiri.backend.message.Message;
 import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -14,12 +17,16 @@ public class User {
     private String password;
     private String image;
 
+    @OneToMany(mappedBy = "senderUser")
+    private List<Message> sendMessages;
+    @OneToMany(mappedBy = "receiverUser")
+    private List<Message> incomingMessages;
+
     public User() {
 
     }
 
-    public User(Long id, String fullName, String email, String password, String image) {
-        this.id = id;
+    public User(String fullName, String email, String password, String image) {
         this.fullName = fullName;
         this.email = email;
         this.password = password;
@@ -66,4 +73,19 @@ public class User {
         return image;
     }
 
+    public List<Message> getSendMessages() {
+        return sendMessages;
+    }
+
+    public void setSendMessages(List<Message> sendMessages) {
+        this.sendMessages = sendMessages;
+    }
+
+    public List<Message> getIncomingMessages() {
+        return incomingMessages;
+    }
+
+    public void setIncomingMessages(List<Message> incomingMessages) {
+        this.incomingMessages = incomingMessages;
+    }
 }
