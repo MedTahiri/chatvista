@@ -1,5 +1,6 @@
 package com.mohamed.tahiri.backend.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mohamed.tahiri.backend.message.Message;
 import jakarta.persistence.*;
 
@@ -9,7 +10,7 @@ import java.util.List;
 @Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String fullName;
@@ -19,6 +20,7 @@ public class User {
 
     @OneToMany(mappedBy = "senderUser")
     private List<Message> sendMessages;
+
     @OneToMany(mappedBy = "receiverUser")
     private List<Message> incomingMessages;
 

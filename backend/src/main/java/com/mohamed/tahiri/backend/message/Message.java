@@ -9,18 +9,18 @@ import java.util.Date;
 @Table(name = "messages")
 public class Message {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String content;
     private Date dateSending;
     private Boolean isRead;
 
     @ManyToOne
-    @JoinColumn(name = "sender_id", nullable = false)
+    @JoinColumn(name = "sender_id")
     private User senderUser;
 
     @ManyToOne
-    @JoinColumn(name = "receiver_id", nullable = false)
+    @JoinColumn(name = "receiver_id")
     private User receiverUser;
 
     public Message() {
