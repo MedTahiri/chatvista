@@ -17,10 +17,10 @@ public class UserController {
         return userService.allUsers();
     }
 
-//    @GetMapping("/{email}/{password}")
-//    public User getUser(@PathVariable("email") String email, @PathVariable("password") String password) {
-//        return userService.getUser(email, password);
-//    }
+    @GetMapping("/{email}/{password}")
+    public User getUser(@PathVariable("email") String email, @PathVariable("password") String password) {
+        return userService.getUser(email, password);
+    }
 //
 //    @GetMapping("/{id}")
 //    public User getUserById(@PathVariable("id") Long id) {

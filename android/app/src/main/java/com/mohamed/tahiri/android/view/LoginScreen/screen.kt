@@ -1,5 +1,7 @@
 package com.mohamed.tahiri.android.view.LoginScreen
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -25,19 +28,30 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import com.google.gson.Gson
 import com.mohamed.tahiri.android.Screen
-import com.mohamed.tahiri.android.view.MyTextField
+import com.mohamed.tahiri.android.model.User
 import com.mohamed.tahiri.android.ui.theme.AndroidTheme
+import com.mohamed.tahiri.android.view.MyTextField
+import com.mohamed.tahiri.android.viewmodel.ApiState
+import com.mohamed.tahiri.android.viewmodel.DataStoreViewModel
+import com.mohamed.tahiri.android.viewmodel.UserViewModel
 
 @Composable
-fun LoginScreen(navController: NavHostController) {
+fun LoginScreen(
+    navController: NavHostController,
+    userViewModel: UserViewModel,
+    dataStoreViewModel: DataStoreViewModel,
+    context: Context
+) {
     val email = remember {
         mutableStateOf("")
     }
     val password = remember {
         mutableStateOf("")
     }
+    val userState = userViewModel.user.value
+    val gson = Gson()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -48,8 +62,7 @@ fun LoginScreen(navController: NavHostController) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .weight(1f, false)
-            , horizontalAlignment = Alignment.CenterHorizontally,
+                .weight(1f, false), horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Text(
@@ -64,13 +77,14 @@ fun LoginScreen(navController: NavHostController) {
                 .fillMaxSize()
                 .weight(2f, false), colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.background
-            )
-            , shape = RoundedCornerShape(30.dp,30.dp,0.dp,0.dp)
+            ), shape = RoundedCornerShape(30.dp, 30.dp, 0.dp, 0.dp)
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxSize().padding(16.dp)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
             ) {
                 MyTextField(
                     email,
@@ -86,7 +100,8 @@ fun LoginScreen(navController: NavHostController) {
                 )
                 Button(
                     onClick = {
-                        navController.navigate(Screen.HomeScreen.name)
+                        userViewModel.getUser(email = email.value, password = password.value)
+                        //navController.navigate(Screen.HomeScreen.name)
                     }, modifier = Modifier
                         .padding(8.dp)
                         .fillMaxWidth(1f), shape = RoundedCornerShape(10.dp)
@@ -112,6 +127,42 @@ fun LoginScreen(navController: NavHostController) {
             }
         }
     }
+    LaunchedEffect(userState) {
+        when (userState) {
+            is ApiState.Loading -> {
+//                Toast.makeText(
+//                    context,
+//                    "wait ...",
+//                    Toast.LENGTH_SHORT
+//                ).show()
+            }
+
+            is ApiState.Success<*> -> {
+                val user = (userState as ApiState.Success<User>).data
+                Toast.makeText(
+                    context,
+                    "Success to log in",
+                    Toast.LENGTH_LONG
+                ).show()
+                dataStoreViewModel.saveUserId(user.id)
+                dataStoreViewModel.saveUserFullName(user.fullName)
+                dataStoreViewModel.saveUserEmail(user.email)
+                dataStoreViewModel.saveUserPassword(user.password)
+                dataStoreViewModel.saveUserImage(user.image)
+                dataStoreViewModel.saveUserConversationsId(gson.toJson(user.conversationsId))
+                navController.navigate(Screen.HomeScreen.name)
+            }
+
+            is ApiState.Error -> {
+                val error = (userState as ApiState.Error).message
+                Toast.makeText(
+                    context,
+                    "Failed to log in : $error",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+    }
 }
 
 
@@ -119,6 +170,6 @@ fun LoginScreen(navController: NavHostController) {
 @Composable
 fun GreetingPreview() {
     AndroidTheme {
-        LoginScreen(navController = rememberNavController())
+
     }
 }

@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.mohamed.tahiri.android.Screen
 import com.mohamed.tahiri.android.viewmodel.DataStoreViewModel
 @Composable
 fun ProfileScreen(navController: NavHostController, dataStoreViewModel: DataStoreViewModel) {
@@ -37,6 +38,7 @@ fun ProfileScreen(navController: NavHostController, dataStoreViewModel: DataStor
         }
         Button(onClick = {
             dataStoreViewModel.cleardataStoreRepository()
+            navController.navigate(Screen.LoginScreen.name)
         }) {
             Text("Logout")
         }

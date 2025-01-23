@@ -7,17 +7,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.mohamed.tahiri.android.Screen
 import com.mohamed.tahiri.android.ui.theme.AndroidTheme
+import com.mohamed.tahiri.android.viewmodel.DataStoreViewModel
 
 @Composable
-fun SplashScreen(navController: NavHostController) {
+fun SplashScreen(navController: NavHostController, dataStoreViewModel: DataStoreViewModel) {
+    val userId by dataStoreViewModel.userId.collectAsState(initial = -1)
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -33,7 +36,13 @@ fun SplashScreen(navController: NavHostController) {
         )
     }
     android.os.Handler().postDelayed({
-        navController.navigate(Screen.LoginScreen.name)
+        if (userId.toInt() != -1){
+            navController.navigate(Screen.HomeScreen.name)
+        }else{
+            navController.navigate(Screen.LoginScreen.name)
+        }
+
+
     }, 3000)
 }
 
@@ -41,6 +50,6 @@ fun SplashScreen(navController: NavHostController) {
 @Preview
 fun Preview() {
     AndroidTheme {
-        SplashScreen(navController = rememberNavController())
+
     }
 }

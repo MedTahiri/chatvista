@@ -42,6 +42,17 @@ class UserViewModel @Inject constructor(private val apiService: ApiService) : Vi
 
         }
     }
+
+    fun getUser(email: String, password: String) {
+        viewModelScope.launch {
+            try {
+                val response = apiService.getUser(email, password)
+                _user.value = ApiState.Success(response)
+            } catch (e: Exception) {
+                _user.value = ApiState.Error("Faild to acces to your user : $e")
+            }
+        }
+    }
 }
 
 sealed class ApiState<out T> {

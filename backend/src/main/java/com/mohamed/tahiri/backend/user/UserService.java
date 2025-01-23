@@ -18,15 +18,15 @@ public class UserService {
 //        return userRepository.findById(id).get();
 //    }
 //
-//    public User getUser(String email, String password) {
-//        for (int i = 0; i < allUsers().size(); i++) {
-//            if (allUsers().get(i).getEmail().equals(email) && allUsers().get(i).getPassword().equals(password)) {
-//                return allUsers().get(i);
-//            }
-//        }
-//        return new User();
-//    }
-//
+    public User getUser(String email, String password) {
+        for (int i = 0; i < allUsers().size(); i++) {
+            if (allUsers().get(i).email.equals(email) && allUsers().get(i).password.equals(password)) {
+                return allUsers().get(i);
+            }
+        }
+        return new User();
+    }
+
     public User newUser(User user) {
         return userRepository.save(user);
     }
