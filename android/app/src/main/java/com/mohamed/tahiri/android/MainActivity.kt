@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -21,6 +22,7 @@ import com.mohamed.tahiri.android.view.MessagingScreen.MessagingScreen
 import com.mohamed.tahiri.android.view.ProfileScreen.ProfileScreen
 import com.mohamed.tahiri.android.view.SignupScreen.SignupScreen
 import com.mohamed.tahiri.android.view.SplashScreen.SplashScreen
+import com.mohamed.tahiri.android.viewmodel.DataStoreViewModel
 
 import com.mohamed.tahiri.android.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,7 +30,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val userViewModel: UserViewModel by viewModels()
-
+    private val dataStoreViewModel : DataStoreViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -39,7 +41,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Main(userViewModel)
+                    Main(userViewModel,dataStoreViewModel)
                 }
             }
         }
@@ -47,7 +49,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Main(userViewModel: UserViewModel) {
+fun Main(userViewModel: UserViewModel, dataStoreViewModel: DataStoreViewModel) {
     val Context = LocalContext.current
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = Screen.SplashScreen.name) {
@@ -55,7 +57,8 @@ fun Main(userViewModel: UserViewModel) {
             SplashScreen(navController)
         }
         composable(Screen.SignupScreen.name) {
-            SignupScreen(navController, userViewModel, Context)
+
+            SignupScreen(navController, userViewModel,dataStoreViewModel, Context)
         }
         composable(Screen.LoginScreen.name) {
             LoginScreen(navController)
@@ -67,7 +70,7 @@ fun Main(userViewModel: UserViewModel) {
             MessagingScreen(navController)
         }
         composable(Screen.ProfileScreen.name) {
-            ProfileScreen(navController)
+            ProfileScreen(navController, dataStoreViewModel)
         }
     }
 }

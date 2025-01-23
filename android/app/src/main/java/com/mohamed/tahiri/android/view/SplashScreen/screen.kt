@@ -33,7 +33,7 @@ fun SplashScreen(navController: NavHostController) {
         )
     }
     android.os.Handler().postDelayed({
-        navController.navigate(Screen.TestScreen.name)
+        navController.navigate(Screen.LoginScreen.name)
     }, 3000)
 }
 

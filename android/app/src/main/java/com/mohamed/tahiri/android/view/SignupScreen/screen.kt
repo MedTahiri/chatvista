@@ -27,20 +27,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.google.gson.Gson
 import com.mohamed.tahiri.android.Screen
 import com.mohamed.tahiri.android.model.User
 import com.mohamed.tahiri.android.model.newUser
 import com.mohamed.tahiri.android.ui.theme.AndroidTheme
 import com.mohamed.tahiri.android.view.MyTextField
 import com.mohamed.tahiri.android.viewmodel.ApiState
+import com.mohamed.tahiri.android.viewmodel.DataStoreViewModel
 import com.mohamed.tahiri.android.viewmodel.UserViewModel
 
 @Composable
-fun SignupScreen(navController: NavHostController, userViewModel: UserViewModel, context: Context) {
-
+fun SignupScreen(
+    navController: NavHostController,
+    userViewModel: UserViewModel,
+    dataStoreViewModel: DataStoreViewModel,
+    context: Context
+) {
     val userState = userViewModel.user.value
-
+    val gson = Gson()
     val name = remember {
         mutableStateOf("")
     }
@@ -165,6 +172,12 @@ fun SignupScreen(navController: NavHostController, userViewModel: UserViewModel,
                     "Success to create new user : $user",
                     Toast.LENGTH_LONG
                 ).show()
+                dataStoreViewModel.saveUserId(user.id)
+                dataStoreViewModel.saveUserFullName(user.fullName)
+                dataStoreViewModel.saveUserEmail(user.email)
+                dataStoreViewModel.saveUserPassword(user.password)
+                dataStoreViewModel.saveUserImage(user.image)
+                dataStoreViewModel.saveUserConversationsId(gson.toJson(user.conversationsId))
                 navController.navigate(Screen.HomeScreen.name)
             }
 
