@@ -1,6 +1,5 @@
 package com.mohamed.tahiri.backend.message;
 
-import com.mohamed.tahiri.backend.user.User;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -10,67 +9,12 @@ import java.util.Date;
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String content;
-    private Date dateSending;
-    private Boolean isRead;
+    public Long id;
+    public String content;
+    public Date dateSending;
+    public Long senderId;
+    public Long recipientId;
 
-    @ManyToOne
-    @JoinColumn(name = "sender_id")
-    private User senderUser;
+    public long conversationId;
 
-    @ManyToOne
-    @JoinColumn(name = "receiver_id")
-    private User receiverUser;
-
-    public Message() {
-    }
-
-    public Message(String content, Date dateSending, Boolean isRead, User senderUser, User receiverUser) {
-        this.content = content;
-        this.dateSending = dateSending;
-        this.isRead = isRead;
-        this.senderUser = senderUser;
-        this.receiverUser = receiverUser;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public Date getDateSending() {
-        return dateSending;
-    }
-
-    public void setDateSending(Date dateSending) {
-        this.dateSending = dateSending;
-    }
-
-    public Boolean getRead() {
-        return isRead;
-    }
-
-    public void setRead(Boolean read) {
-        isRead = read;
-    }
-
-    public User getSenderUser() {
-        return senderUser;
-    }
-
-    public void setSenderUser(User senderUser) {
-        this.senderUser = senderUser;
-    }
-
-    public User getReceiverUser() {
-        return receiverUser;
-    }
-
-    public void setReceiverUser(User receiverUser) {
-        this.receiverUser = receiverUser;
-    }
 }

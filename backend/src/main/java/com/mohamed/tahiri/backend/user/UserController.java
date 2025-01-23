@@ -17,23 +17,23 @@ public class UserController {
         return userService.allUsers();
     }
 
-    @GetMapping("/{email}/{password}")
-    public User getUser(@PathVariable("email") String email, @PathVariable("password") String password) {
-        return userService.getUser(email, password);
-    }
-
-    @GetMapping("/{id}")
-    public User getUserById(@PathVariable("id") Long id) {
-        return userService.getUserById(id);
-    }
-
+//    @GetMapping("/{email}/{password}")
+//    public User getUser(@PathVariable("email") String email, @PathVariable("password") String password) {
+//        return userService.getUser(email, password);
+//    }
+//
+//    @GetMapping("/{id}")
+//    public User getUserById(@PathVariable("id") Long id) {
+//        return userService.getUserById(id);
+//    }
+//
     @PostMapping("/new")
     public User newUser(@RequestBody User user){
         return userService.newUser(user);
     }
-
-    @PutMapping("/update")
-    public User updateUser(@RequestBody User user){
-        return userService.updateUser(user);
-    }
+//
+//    @PutMapping("/update")
+//    public User updateUser(@RequestBody User user){
+//        return userService.updateUser(user);
+//    }
 }
