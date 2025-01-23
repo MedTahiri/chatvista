@@ -9,6 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -47,13 +48,14 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Main(userViewModel: UserViewModel) {
+    val Context = LocalContext.current
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = Screen.SplashScreen.name) {
         composable(Screen.SplashScreen.name) {
             SplashScreen(navController)
         }
         composable(Screen.SignupScreen.name) {
-            SignupScreen(navController)
+            SignupScreen(navController, userViewModel, Context)
         }
         composable(Screen.LoginScreen.name) {
             LoginScreen(navController)

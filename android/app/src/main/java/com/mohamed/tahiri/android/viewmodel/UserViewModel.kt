@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mohamed.tahiri.android.model.ApiService
 import com.mohamed.tahiri.android.model.User
+import com.mohamed.tahiri.android.model.newUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,6 +17,9 @@ class UserViewModel @Inject constructor(private val apiService: ApiService) : Vi
     private val _users = mutableStateOf<ApiState<List<User>>>(ApiState.Loading)
     val users: State<ApiState<List<User>>> = _users
 
+    private val _user = mutableStateOf<ApiState<User>>(ApiState.Loading)
+    val user: State<ApiState<User>> = _user
+
     fun fetchUsers() {
         viewModelScope.launch {
             try {
@@ -24,6 +28,18 @@ class UserViewModel @Inject constructor(private val apiService: ApiService) : Vi
             } catch (e: Exception) {
                 _users.value = ApiState.Error("Failed to fetch data : $e")
             }
+        }
+    }
+
+    fun createUser(user: newUser) {
+        viewModelScope.launch {
+            try {
+                val response = apiService.newUser(user)
+                _user.value = ApiState.Success(response)
+            } catch (e: Exception) {
+                _user.value = ApiState.Error("Failed to create new user : $e")
+            }
+
         }
     }
 }

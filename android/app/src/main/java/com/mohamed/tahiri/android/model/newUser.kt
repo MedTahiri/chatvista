@@ -1,11 +1,9 @@
 package com.mohamed.tahiri.android.model
 
-class User(
-    val id: Long,
+class newUser(
     val fullName: String,
     val email: String,
     val password: String,
-    val image:String,
-    val conversationsId:List<Long>
+    val image: String,
+    val conversationsId: List<Long>
 )
-

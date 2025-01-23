@@ -1,5 +1,7 @@
 package com.mohamed.tahiri.android.view.SignupScreen
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -25,13 +28,19 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.mohamed.tahiri.android.Screen
-import com.mohamed.tahiri.android.view.MyTextField
+import com.mohamed.tahiri.android.model.User
+import com.mohamed.tahiri.android.model.newUser
 import com.mohamed.tahiri.android.ui.theme.AndroidTheme
+import com.mohamed.tahiri.android.view.MyTextField
+import com.mohamed.tahiri.android.viewmodel.ApiState
+import com.mohamed.tahiri.android.viewmodel.UserViewModel
 
 @Composable
-fun SignupScreen(navController: NavHostController) {
+fun SignupScreen(navController: NavHostController, userViewModel: UserViewModel, context: Context) {
+
+    val userState = userViewModel.user.value
+
     val name = remember {
         mutableStateOf("")
     }
@@ -72,7 +81,13 @@ fun SignupScreen(navController: NavHostController) {
                 containerColor = MaterialTheme.colorScheme.background
             ), shape = RoundedCornerShape(30.dp, 30.dp, 0.dp, 0.dp)
         ) {
-            Column (modifier = Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center){
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
                 MyTextField(name, "Full Name", "Full Name", KeyboardOptions.Default)
                 MyTextField(
                     email,
@@ -94,7 +109,21 @@ fun SignupScreen(navController: NavHostController) {
                 )
                 Button(
                     onClick = {
-                        navController.navigate(Screen.HomeScreen.name)
+                        if (password.value == confirmepassword.value) {
+                            val contacts: List<Long> = mutableListOf()
+                            val user: newUser =
+                                newUser(name.value, email.value, password.value, "", contacts)
+
+                            userViewModel.createUser(user)
+
+                        } else {
+                            Toast.makeText(
+                                context,
+                                "Failed to create new user passwords do not match ! ",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+
                     }, modifier = Modifier
                         .padding(8.dp)
                         .fillMaxWidth(), shape = RoundedCornerShape(10.dp)
@@ -118,6 +147,38 @@ fun SignupScreen(navController: NavHostController) {
             }
         }
     }
+
+    LaunchedEffect(userState) {
+        when (userState) {
+            is ApiState.Loading -> {
+//                Toast.makeText(
+//                    context,
+//                    "wait ...",
+//                    Toast.LENGTH_SHORT
+//                ).show()
+            }
+
+            is ApiState.Success<*> -> {
+                val user = (userState as ApiState.Success<User>).data
+                Toast.makeText(
+                    context,
+                    "Success to create new user : $user",
+                    Toast.LENGTH_LONG
+                ).show()
+                navController.navigate(Screen.HomeScreen.name)
+            }
+
+            is ApiState.Error -> {
+                val error = (userState as ApiState.Error).message
+                Toast.makeText(
+                    context,
+                    "Failed to create new user : $error",
+                    Toast.LENGTH_LONG
+                ).show()
+
+            }
+        }
+    }
 }
 
 
@@ -125,6 +186,6 @@ fun SignupScreen(navController: NavHostController) {
 @Composable
 fun GreetingPreview() {
     AndroidTheme {
-        SignupScreen(navController = rememberNavController())
+
     }
 }
