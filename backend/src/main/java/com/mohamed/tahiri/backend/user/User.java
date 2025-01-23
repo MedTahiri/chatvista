@@ -15,7 +15,5 @@ public class User {
     public String email;
     public String password;
     public String image;
-
     public List<Long> conversationsId;
-
 }

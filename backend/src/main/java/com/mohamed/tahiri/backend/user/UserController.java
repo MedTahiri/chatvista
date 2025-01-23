@@ -31,9 +31,9 @@ public class UserController {
     public User newUser(@RequestBody User user){
         return userService.newUser(user);
     }
-//
-//    @PutMapping("/update")
-//    public User updateUser(@RequestBody User user){
-//        return userService.updateUser(user);
-//    }
+
+    @PutMapping("/update")
+    public User updateUser(@RequestBody User user){
+        return userService.updateUser(user);
+    }
 }
