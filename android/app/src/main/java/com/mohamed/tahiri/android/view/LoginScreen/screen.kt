@@ -145,11 +145,11 @@ fun LoginScreen(
                     Toast.LENGTH_LONG
                 ).show()
                 dataStoreViewModel.saveUserId(user.id)
-                dataStoreViewModel.saveUserFullName(user.fullName)
-                dataStoreViewModel.saveUserEmail(user.email)
-                dataStoreViewModel.saveUserPassword(user.password)
-                dataStoreViewModel.saveUserImage(user.image)
-                dataStoreViewModel.saveUserConversationsId(gson.toJson(user.conversationsId))
+//                dataStoreViewModel.saveUserFullName(user.fullName)
+//                dataStoreViewModel.saveUserEmail(user.email)
+//                dataStoreViewModel.saveUserPassword(user.password)
+//                dataStoreViewModel.saveUserImage(user.image)
+//                dataStoreViewModel.saveUserConversationsId(gson.toJson(user.conversationsId))
                 navController.navigate(Screen.HomeScreen.name)
             }
 

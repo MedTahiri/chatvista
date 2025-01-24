@@ -47,7 +47,6 @@ fun SignupScreen(
     context: Context
 ) {
     val userState = userViewModel.user.value
-    val gson = Gson()
     val name = remember {
         mutableStateOf("")
     }
@@ -117,9 +116,9 @@ fun SignupScreen(
                 Button(
                     onClick = {
                         if (password.value == confirmepassword.value) {
-                            val contacts: List<Long> = mutableListOf()
+                            val conversations: List<Long> = mutableListOf()
                             val user: newUser =
-                                newUser(name.value, email.value, password.value, "", contacts)
+                                newUser(name.value, email.value, password.value, "", conversations)
 
                             userViewModel.createUser(user)
 
@@ -158,11 +157,6 @@ fun SignupScreen(
     LaunchedEffect(userState) {
         when (userState) {
             is ApiState.Loading -> {
-//                Toast.makeText(
-//                    context,
-//                    "wait ...",
-//                    Toast.LENGTH_SHORT
-//                ).show()
             }
 
             is ApiState.Success<*> -> {
@@ -173,11 +167,6 @@ fun SignupScreen(
                     Toast.LENGTH_LONG
                 ).show()
                 dataStoreViewModel.saveUserId(user.id)
-                dataStoreViewModel.saveUserFullName(user.fullName)
-                dataStoreViewModel.saveUserEmail(user.email)
-                dataStoreViewModel.saveUserPassword(user.password)
-                dataStoreViewModel.saveUserImage(user.image)
-                dataStoreViewModel.saveUserConversationsId(gson.toJson(user.conversationsId))
                 navController.navigate(Screen.HomeScreen.name)
             }
 

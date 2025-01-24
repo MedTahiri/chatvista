@@ -1,7 +1,6 @@
 package com.mohamed.tahiri.backend.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,8 +17,9 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User getUserById(Long id) {
-        return userRepository.findById(id).get();
+    public User getUserById(long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
     }
 
     public User getUser(String email, String password) {
@@ -42,6 +42,7 @@ public class UserService {
         //user.password = passwordEncoder.encode(updateUser.password);
         user.password = updateUser.password;
         user.image = updateUser.image;
+        user.conversationsId = updateUser.conversationsId;
 
         return userRepository.save(user);
     }

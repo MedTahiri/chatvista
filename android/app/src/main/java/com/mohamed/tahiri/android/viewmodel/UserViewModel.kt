@@ -53,10 +53,28 @@ class UserViewModel @Inject constructor(private val apiService: ApiService) : Vi
             }
         }
     }
-}
 
-sealed class ApiState<out T> {
-    object Loading : ApiState<Nothing>()
-    data class Success<out T>(val data: T) : ApiState<T>()
-    data class Error(val message: String) : ApiState<Nothing>()
+    fun updateUser(user: User) {
+        viewModelScope.launch {
+            try {
+                val response = apiService.updateUser(user)
+                _user.value = ApiState.Success(response)
+            } catch (e: Exception) {
+                _user.value = ApiState.Error("Failed to update user : $e")
+            }
+
+        }
+    }
+
+    fun getUserById(id: Long) {
+        viewModelScope.launch {
+            try {
+                val response = apiService.getUserById(id)
+                _user.value = ApiState.Success(response)
+            } catch (e: Exception) {
+                _user.value = ApiState.Error("Failed to get user : $e")
+            }
+        }
+    }
+
 }

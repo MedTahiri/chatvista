@@ -12,11 +12,11 @@ import javax.inject.Inject
 @HiltViewModel
 class DataStoreViewModel @Inject constructor(private val dataStoreRepository: DataStoreRepository) : ViewModel() {
     val userId: Flow<Long> = dataStoreRepository.currentUserId
-    val userFullName: Flow<String> = dataStoreRepository.userFullName
-    val userEmail: Flow<String> = dataStoreRepository.userEmail
-    val userPassword: Flow<String> = dataStoreRepository.userPassword
-    val userImage: Flow<String> = dataStoreRepository.userImage
-    val userConversationsId: Flow<String> = dataStoreRepository.userConversationsId
+//    val userFullName: Flow<String> = dataStoreRepository.userFullName
+//    val userEmail: Flow<String> = dataStoreRepository.userEmail
+//    val userPassword: Flow<String> = dataStoreRepository.userPassword
+//    val userImage: Flow<String> = dataStoreRepository.userImage
+//    val userConversationsId: Flow<String> = dataStoreRepository.userConversationsId
 
     fun saveUserId(userId: Long) {
         viewModelScope.launch {
@@ -24,35 +24,35 @@ class DataStoreViewModel @Inject constructor(private val dataStoreRepository: Da
         }
     }
 
-    fun saveUserFullName(fullName: String) {
-        viewModelScope.launch {
-            dataStoreRepository.saveUserFullName(fullName)
-        }
-    }
-
-    fun saveUserEmail(email: String) {
-        viewModelScope.launch {
-            dataStoreRepository.saveUserEmail(email)
-        }
-    }
-
-    fun saveUserPassword(password: String) {
-        viewModelScope.launch {
-            dataStoreRepository.saveUserPassword(password)
-        }
-    }
-
-    fun saveUserImage(imageUrl: String) {
-        viewModelScope.launch {
-            dataStoreRepository.saveUserImage(imageUrl)
-        }
-    }
-
-    fun saveUserConversationsId(conversationsId: String) {
-        viewModelScope.launch {
-            dataStoreRepository.saveUserConversationsId(conversationsId)
-        }
-    }
+//    fun saveUserFullName(fullName: String) {
+//        viewModelScope.launch {
+//            dataStoreRepository.saveUserFullName(fullName)
+//        }
+//    }
+//
+//    fun saveUserEmail(email: String) {
+//        viewModelScope.launch {
+//            dataStoreRepository.saveUserEmail(email)
+//        }
+//    }
+//
+//    fun saveUserPassword(password: String) {
+//        viewModelScope.launch {
+//            dataStoreRepository.saveUserPassword(password)
+//        }
+//    }
+//
+//    fun saveUserImage(imageUrl: String) {
+//        viewModelScope.launch {
+//            dataStoreRepository.saveUserImage(imageUrl)
+//        }
+//    }
+//
+//    fun saveUserConversationsId(conversationsId: String) {
+//        viewModelScope.launch {
+//            dataStoreRepository.saveUserConversationsId(conversationsId)
+//        }
+//    }
 
     fun cleardataStoreRepository() {
         viewModelScope.launch {

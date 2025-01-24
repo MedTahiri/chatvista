@@ -1,5 +1,7 @@
 package com.mohamed.tahiri.android.view.HomeScreen
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,7 +18,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -26,26 +30,56 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.mohamed.tahiri.android.Screen
+import com.mohamed.tahiri.android.model.Conversation
 import com.mohamed.tahiri.android.model.User
+import com.mohamed.tahiri.android.model.newConversation
 import com.mohamed.tahiri.android.ui.theme.AndroidTheme
 import com.mohamed.tahiri.android.viewmodel.ApiState
+import com.mohamed.tahiri.android.viewmodel.ConversationViewModel
+import com.mohamed.tahiri.android.viewmodel.DataStoreViewModel
 import com.mohamed.tahiri.android.viewmodel.UserViewModel
 
 @Composable
-fun HomeScreen(navController: NavHostController, userViewModel: UserViewModel) {
+fun HomeScreen(
+    navController: NavHostController,
+    userViewModel: UserViewModel,
+    dataStoreViewModel: DataStoreViewModel,
+    conversationViewModel: ConversationViewModel,
+    context: Context
+) {
     val usersState = userViewModel.users.value
-
-    LaunchedEffect(Unit) {
-        userViewModel.fetchUsers()
+    val userState = userViewModel.user.value
+    val shouldShowDialog = remember { mutableStateOf(false) }
+    val contactSelected = remember {
+        mutableStateOf(
+            User(
+                id = -1,
+                fullName = "",
+                email = "",
+                password = "",
+                image = "",
+                conversationsId = mutableListOf()
+            )
+        )
+    }
+    val userId by dataStoreViewModel.userId.collectAsState(-1)
+    LaunchedEffect(userId) {
+        if (userId != -1L) {
+            userViewModel.fetchUsers()
+            userViewModel.getUserById(userId)
+        }
     }
 
     val switch = remember {
@@ -107,37 +141,74 @@ fun HomeScreen(navController: NavHostController, userViewModel: UserViewModel) {
                                 .padding(8.dp)
                         )
                     }
-                    LazyColumn(modifier = Modifier.fillMaxSize()) {
-                        items(10) {
-                            Card(modifier = Modifier
-                                .padding(8.dp)
-                                .clickable {
-                                    navController.navigate(Screen.MessagingScreen.name)
-                                }) {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(8.dp),
-                                    horizontalArrangement = Arrangement.Start,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.AccountCircle,
-                                        contentDescription = "",
-                                        modifier = Modifier.size(65.dp)
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Top
+                    ) {
+                        Box(contentAlignment = Alignment.TopCenter) {
+                            when (userState) {
+                                is ApiState.Loading -> {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier
+                                            .align(Alignment.Center)
                                     )
-                                    Column(
-                                        modifier = Modifier.fillMaxSize(),
-                                        horizontalAlignment = Alignment.Start,
-                                        verticalArrangement = Arrangement.SpaceBetween
-                                    ) {
-                                        Text(text = "Mohamed Tahiri")
-                                        Text(text = "hi bro \uD83D\uDC4B")
+                                }
+
+                                is ApiState.Success<*> -> {
+                                    val user = (userState as ApiState.Success<User>).data
+                                    Column {
+                                        LazyColumn(modifier = Modifier.fillMaxSize()) {
+                                            items(
+                                                items = user.conversationsId,
+                                                itemContent = { conversation ->
+                                                    Card(modifier = Modifier
+                                                        .padding(8.dp)
+                                                        .clickable {
+                                                            navController.navigate(Screen.MessagingScreen.name)
+                                                        }, onClick = {
+                                                        navController.navigate(Screen.MessagingScreen.name)
+                                                    }) {
+                                                        Row(
+                                                            modifier = Modifier
+                                                                .fillMaxWidth()
+                                                                .padding(8.dp),
+                                                            horizontalArrangement = Arrangement.Start,
+                                                            verticalAlignment = Alignment.CenterVertically
+                                                        ) {
+                                                            Icon(
+                                                                imageVector = Icons.Default.AccountCircle,
+                                                                contentDescription = "",
+                                                                modifier = Modifier.size(65.dp)
+                                                            )
+                                                            Column(
+                                                                modifier = Modifier,
+                                                                horizontalAlignment = Alignment.Start,
+                                                                verticalArrangement = Arrangement.Center
+                                                            ) {
+                                                                Text(text = conversation.toString())
+                                                                Text(text = conversation.toString())
+                                                            }
+                                                        }
+                                                    }
+                                                })
+                                        }
                                     }
                                 }
-                            }
 
+                                is ApiState.Error -> {
+                                    val error = (userState as ApiState.Error).message
+                                    Text(
+                                        text = "Failed to fetch data: $error",
+                                        modifier = Modifier
+                                            .padding(16.dp)
+                                            .fillMaxWidth()
+                                            .align(Alignment.Center)
+                                    )
+                                }
+                            }
                         }
+
                     }
                 }
 
@@ -186,70 +257,76 @@ fun HomeScreen(navController: NavHostController, userViewModel: UserViewModel) {
                                 .padding(8.dp)
                         )
                     }
-                    Box {
-                        when (usersState) {
-                            is ApiState.Loading -> {
-                                // Show loading indicator
-                                CircularProgressIndicator(
-                                    modifier = Modifier
-                                        .align(Alignment.Center)
-                                )
-                            }
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Top
+                    ) {
+                        Box(contentAlignment = Alignment.TopCenter) {
+                            when (usersState) {
+                                is ApiState.Loading -> {
+                                    // Show loading indicator
+                                    CircularProgressIndicator(
+                                        modifier = Modifier
+                                            .align(Alignment.Center)
+                                    )
+                                }
 
-                            is ApiState.Success<*> -> {
-                                val users = (usersState as ApiState.Success<List<User>>).data
-                                // Display the fetched data using Jetpack Compose components
-                                Column {
-                                    LazyColumn(modifier = Modifier.fillMaxSize()) {
-                                        items(items = users, itemContent = { user ->
-                                            Card(modifier = Modifier
-                                                .padding(8.dp)
-                                                .clickable {
-                                                    navController.navigate(Screen.MessagingScreen.name)
+                                is ApiState.Success<*> -> {
+                                    val users = (usersState as ApiState.Success<List<User>>).data
+                                    Column {
+                                        LazyColumn(modifier = Modifier.fillMaxSize()) {
+                                            items(items = users, itemContent = { user ->
+                                                Card(modifier = Modifier
+                                                    .padding(8.dp)
+                                                    .clickable {
+                                                        navController.navigate(Screen.MessagingScreen.name)
+                                                    }, onClick = {
+                                                    contactSelected.value = user
+                                                    shouldShowDialog.value = true
                                                 }) {
-                                                Row(
-                                                    modifier = Modifier
-                                                        .fillMaxWidth()
-                                                        .padding(8.dp),
-                                                    horizontalArrangement = Arrangement.Start,
-                                                    verticalAlignment = Alignment.CenterVertically
-                                                ) {
-                                                    Icon(
-                                                        imageVector = Icons.Default.AccountCircle,
-                                                        contentDescription = "",
-                                                        modifier = Modifier.size(65.dp)
-                                                    )
-                                                    Column(
-                                                        modifier = Modifier,
-                                                        horizontalAlignment = Alignment.Start,
-                                                        verticalArrangement = Arrangement.Center
+                                                    Row(
+                                                        modifier = Modifier
+                                                            .fillMaxWidth()
+                                                            .padding(8.dp),
+                                                        horizontalArrangement = Arrangement.Start,
+                                                        verticalAlignment = Alignment.CenterVertically
                                                     ) {
-                                                        Text(text = user.fullName)
+                                                        Icon(
+                                                            imageVector = Icons.Default.AccountCircle,
+                                                            contentDescription = "",
+                                                            modifier = Modifier.size(65.dp)
+                                                        )
+                                                        Column(
+                                                            modifier = Modifier,
+                                                            horizontalAlignment = Alignment.Start,
+                                                            verticalArrangement = Arrangement.Center
+                                                        ) {
+                                                            Text(text = user.fullName)
+                                                        }
                                                     }
                                                 }
-                                            }
-                                        })
+                                            })
+                                        }
                                     }
                                 }
-                            }
 
-                            is ApiState.Error -> {
-                                val error = (usersState as ApiState.Error).message
-                                // Show error message
-                                Text(
-                                    text = "Failed to fetch data: $error",
-                                    modifier = Modifier
-                                        .padding(16.dp)
-                                        .fillMaxWidth()
-                                        .align(Alignment.Center)
-                                )
+                                is ApiState.Error -> {
+                                    val error = (usersState as ApiState.Error).message
+                                    Text(
+                                        text = "Failed to fetch data: $error",
+                                        modifier = Modifier
+                                            .padding(16.dp)
+                                            .fillMaxWidth()
+                                            .align(Alignment.Center)
+                                    )
+                                }
                             }
                         }
+
                     }
 
                 }
-
-
             }
 
             BottomAppBar {
@@ -293,6 +370,75 @@ fun HomeScreen(navController: NavHostController, userViewModel: UserViewModel) {
                         )
                     }
                 }
+            }
+        }
+    }
+    val conversationState = conversationViewModel.conversation.value
+    if (shouldShowDialog.value) {
+        AlertDialog(
+            onDismissRequest = {
+                shouldShowDialog.value = false
+            },
+            title = { Text(text = "New Conversation") },
+            text = { Text(text = "do you want create new conversation with " + contactSelected.value.fullName + " ?") },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        val contactsId = listOf<Long>(contactSelected.value.id, userId)
+                        val messagesId = listOf<Long>()
+                        conversationViewModel.newConversation(
+                            newConversation(
+                                contactsId,
+                                messagesId
+                            )
+                        )
+                        shouldShowDialog.value = false
+                    }
+                ) {
+                    Text(
+                        text = "Confirm",
+                        color = Color.White
+                    )
+                }
+            }, dismissButton = {
+                Button(
+                    onClick = {
+                        shouldShowDialog.value = false
+                    }
+                ) {
+                    Text(
+                        text = "Dismiss",
+                        color = Color.White
+                    )
+                }
+            }
+        )
+    }
+
+    LaunchedEffect(conversationState) {
+        when (conversationState) {
+            is ApiState.Loading -> {
+            }
+
+            is ApiState.Success<*> -> {
+                val conversation = (conversationState as ApiState.Success<Conversation>).data
+                Toast.makeText(
+                    context,
+                    "Success to create new conversation $conversation",
+                    Toast.LENGTH_LONG
+                ).show()
+                TODO("update user")
+                //val user = userViewModel.updateUser()
+            }
+
+            is ApiState.Error -> {
+                val error = (conversationState as ApiState.Error).message
+                Toast.makeText(
+                    context,
+                    "Failed to create new conversation : $error",
+                    Toast.LENGTH_LONG
+                ).show()
+
             }
         }
     }

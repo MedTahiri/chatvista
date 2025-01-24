@@ -8,7 +8,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-
     @Autowired
     private UserService userService;
 
@@ -21,12 +20,12 @@ public class UserController {
     public User getUser(@PathVariable("email") String email, @PathVariable("password") String password) {
         return userService.getUser(email, password);
     }
-//
-//    @GetMapping("/{id}")
-//    public User getUserById(@PathVariable("id") Long id) {
-//        return userService.getUserById(id);
-//    }
-//
+
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable("id") Long id) {
+        return userService.getUserById(id);
+    }
+
     @PostMapping("/new")
     public User newUser(@RequestBody User user){
         return userService.newUser(user);
