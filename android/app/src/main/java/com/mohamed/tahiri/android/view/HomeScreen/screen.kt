@@ -76,8 +76,8 @@ fun HomeScreen(
     }
     val userId by dataStoreViewModel.userId.collectAsState(-1)
     LaunchedEffect(userId) {
+        userViewModel.fetchUsers()
         if (userId != -1L) {
-            userViewModel.fetchUsers()
             userViewModel.getUserById(userId)
         }
     }
@@ -427,8 +427,12 @@ fun HomeScreen(
                     "Success to create new conversation $conversation",
                     Toast.LENGTH_LONG
                 ).show()
-                TODO("update user")
+                //TODO("update user")
                 //val user = userViewModel.updateUser()
+                userViewModel.getUserById(userId)
+                val user = (userState as ApiState.Success<User>).data
+                user.conversationsId.add(conversation.id)
+                userViewModel.updateUser(user)
             }
 
             is ApiState.Error -> {

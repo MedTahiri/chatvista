@@ -36,12 +36,11 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AndroidTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Main(userViewModel, dataStoreViewModel , conversationViewModel)
+                    Main(userViewModel, dataStoreViewModel, conversationViewModel)
                 }
             }
         }
@@ -54,26 +53,52 @@ fun Main(
     dataStoreViewModel: DataStoreViewModel,
     conversationViewModel: ConversationViewModel
 ) {
-    val Context = LocalContext.current
+    val context = LocalContext.current
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = Screen.SplashScreen.name) {
         composable(Screen.SplashScreen.name) {
-            SplashScreen(navController, dataStoreViewModel)
+            SplashScreen(
+                navController,
+                dataStoreViewModel,
+                userViewModel
+            )
         }
         composable(Screen.SignupScreen.name) {
-            SignupScreen(navController, userViewModel, dataStoreViewModel, Context)
+            SignupScreen(
+                navController,
+                userViewModel,
+                dataStoreViewModel,
+                context
+            )
         }
         composable(Screen.LoginScreen.name) {
-            LoginScreen(navController, userViewModel, dataStoreViewModel, Context)
+            LoginScreen(
+                navController,
+                userViewModel,
+                dataStoreViewModel,
+                context
+            )
         }
         composable(Screen.HomeScreen.name) {
-            HomeScreen(navController, userViewModel, dataStoreViewModel , conversationViewModel, Context)
+            HomeScreen(
+                navController,
+                userViewModel,
+                dataStoreViewModel,
+                conversationViewModel,
+                context
+            )
         }
         composable(Screen.MessagingScreen.name) {
-            MessagingScreen(navController)
+            MessagingScreen(
+                navController
+            )
         }
         composable(Screen.ProfileScreen.name) {
-            ProfileScreen(navController, userViewModel, dataStoreViewModel)
+            ProfileScreen(
+                navController,
+                userViewModel,
+                dataStoreViewModel
+            )
         }
     }
 }

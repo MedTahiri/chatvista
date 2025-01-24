@@ -11,18 +11,18 @@ interface ApiService {
     suspend fun getUsers(): List<User>
 
     @POST("user/new")
-    suspend fun newUser(@Body user: newUser) : User
+    suspend fun newUser(@Body user: newUser): User
 
     @GET("user/{email}/{password}")
-    suspend fun getUser(@Path("email") email:String , @Path("password") password:String) : User
+    suspend fun getUser(@Path("email") email: String, @Path("password") password: String): User
 
     @PUT("user/update")
-    suspend fun updateUser(@Body user: User) : User
+    suspend fun updateUser(@Body user: User): User
 
     @GET("user/{id}")
-    suspend fun getUserById(@Path("id") id : Long) : User
+    suspend fun getUserById(@Path("id") id: Long): User
 
 
     @POST("conversation/new")
-    suspend fun newConversation(@Body conversation: newConversation) : Conversation
+    suspend fun newConversation(@Body conversation: newConversation): Conversation
 }
