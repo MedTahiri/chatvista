@@ -11,8 +11,7 @@ public class Conversation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
 
-    public Long person1Id;
-    public Long person2Id;
+    public List<Long> contactsId;
 
     public List<Long> messagesId;
 }
