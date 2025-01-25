@@ -28,4 +28,16 @@ class ConversationViewModel @Inject constructor(private val apiService: ApiServi
 
         }
     }
+
+    fun getConversationById(id : Long) {
+        viewModelScope.launch {
+            try {
+                val response = apiService.getConversationById(id)
+                _conversation.value = ApiState.Success(response)
+            } catch (e: Exception) {
+                _conversation.value = ApiState.Error("Failed to get conversation : $e")
+            }
+
+        }
+    }
 }

@@ -25,4 +25,7 @@ interface ApiService {
 
     @POST("conversation/new")
     suspend fun newConversation(@Body conversation: newConversation): Conversation
+
+    @GET("conversation/{id}")
+    suspend fun getConversationById(@Path("id") id: Long): Conversation
 }
