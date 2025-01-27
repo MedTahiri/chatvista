@@ -32,19 +32,18 @@ fun SplashScreen(
     userViewModel: UserViewModel
 ) {
     val userId by dataStoreViewModel.userId.collectAsState(initial = -1)
-    val userState = userViewModel.user.value
-    val currentUser = remember {
-        mutableStateOf(
-            User(
-                id = -1,
-                fullName = "",
-                email = "",
-                password = "",
-                image = "",
-                conversationsId = mutableListOf()
-            )
-        )
-    }
+//    val userState = userViewModel.user.value
+//    val currentUser = remember {
+//        mutableStateOf(
+//            User(
+//                id = -1,
+//                fullName = "",
+//                email = "",
+//                password = "",
+//                image = ""
+//            )
+//        )
+//    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -60,22 +59,22 @@ fun SplashScreen(
         )
     }
     android.os.Handler().postDelayed({
-        if (userId.toInt() != -1) {
-            userViewModel.getUserById(userId)
-            navController.navigate(Screen.HomeScreen.name)
-        } else {
+        if (userId.toInt() <= 0) {
+//            userViewModel.getUserById(userId)
             navController.navigate(Screen.LoginScreen.name)
+        } else {
+            navController.navigate(Screen.HomeScreen.name)
         }
     }, 3000)
-    LaunchedEffect(userState) {
-        when (userState) {
-            is ApiState.Success<*> -> {
-                val user = (userState as ApiState.Success<User>).data
-                currentUser.value = user
-            }
-            else -> {}
-        }
-    }
+//    LaunchedEffect(userState) {
+//        when (userState) {
+//            is ApiState.Success<*> -> {
+//                val user = (userState as ApiState.Success<User>).data
+//                currentUser.value = user
+//            }
+//            else -> {}
+//        }
+//    }
 }
 
 @Composable

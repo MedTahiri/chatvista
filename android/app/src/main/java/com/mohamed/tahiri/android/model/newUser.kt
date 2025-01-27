@@ -4,6 +4,5 @@ class newUser(
     val fullName: String,
     val email: String,
     val password: String,
-    val image: String,
-    val conversationsId: List<Long>
+    val image: String
 )

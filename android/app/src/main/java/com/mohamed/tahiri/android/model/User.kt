@@ -5,7 +5,6 @@ class User(
     val fullName: String,
     val email: String,
     val password: String,
-    val image:String,
-    val conversationsId:MutableList<Long>
+    val image:String
 )
 

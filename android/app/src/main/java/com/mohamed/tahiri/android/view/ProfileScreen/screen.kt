@@ -34,25 +34,24 @@ fun ProfileScreen(
                 fullName = "",
                 email = "",
                 password = "",
-                image = "",
-                conversationsId = mutableListOf()
+                image = ""
             )
         )
     }
     val userState = userViewModel.user.value
     Column {
-        Text(text = "User ID: $userId")
+        Text(text = "User ID: ${currentUser.value.id}")
         Text(text = "Full Name: ${currentUser.value.fullName}")
         Text(text = "Email: ${currentUser.value.email}")
         Text(text = "Password: ${currentUser.value.password}")
         Text(text = "Image: ${currentUser.value.image}")
-        Text(text = "Conversations: ${currentUser.value.conversationsId}")
-        for (conversation in currentUser.value.conversationsId) {
-            Text(text = "conversation : $conversation")
-        }
+//        Text(text = "Conversations: ${currentUser.value.conversationsId}")
+//        for (conversation in currentUser.value.conversationsId) {
+//            Text(text = "conversation : $conversation")
+//        }
         Button(onClick = {
             dataStoreViewModel.cleardataStoreRepository()
-            navController.navigate(Screen.LoginScreen.name)
+            navController.navigate(Screen.SplashScreen.name)
         }) {
             Text("Logout")
         }

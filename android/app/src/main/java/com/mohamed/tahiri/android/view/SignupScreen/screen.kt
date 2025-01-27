@@ -116,9 +116,9 @@ fun SignupScreen(
                 Button(
                     onClick = {
                         if (password.value == confirmepassword.value) {
-                            val conversations: List<Long> = mutableListOf()
+                            //val conversations: List<Long> = mutableListOf()
                             val user: newUser =
-                                newUser(name.value, email.value, password.value, "", conversations)
+                                newUser(name.value, email.value, password.value, "")
 
                             userViewModel.createUser(user)
 

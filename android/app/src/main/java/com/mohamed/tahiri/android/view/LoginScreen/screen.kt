@@ -51,7 +51,7 @@ fun LoginScreen(
         mutableStateOf("")
     }
     val userState = userViewModel.user.value
-    val gson = Gson()
+    //val gson = Gson()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -130,11 +130,7 @@ fun LoginScreen(
     LaunchedEffect(userState) {
         when (userState) {
             is ApiState.Loading -> {
-//                Toast.makeText(
-//                    context,
-//                    "wait ...",
-//                    Toast.LENGTH_SHORT
-//                ).show()
+
             }
 
             is ApiState.Success<*> -> {
@@ -145,11 +141,6 @@ fun LoginScreen(
                     Toast.LENGTH_LONG
                 ).show()
                 dataStoreViewModel.saveUserId(user.id)
-//                dataStoreViewModel.saveUserFullName(user.fullName)
-//                dataStoreViewModel.saveUserEmail(user.email)
-//                dataStoreViewModel.saveUserPassword(user.password)
-//                dataStoreViewModel.saveUserImage(user.image)
-//                dataStoreViewModel.saveUserConversationsId(gson.toJson(user.conversationsId))
                 navController.navigate(Screen.HomeScreen.name)
             }
 

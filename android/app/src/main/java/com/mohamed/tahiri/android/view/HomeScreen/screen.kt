@@ -60,8 +60,11 @@ fun HomeScreen(
     context: Context
 ) {
     val usersState = userViewModel.users.value
-    val userState = userViewModel.user.value
+    val conversationsState = conversationViewModel.conversationByUser.value
+    val conversationState = conversationViewModel.conversation.value
+    //val userState = userViewModel.user.value
     val shouldShowDialog = remember { mutableStateOf(false) }
+    //val isConversationCreated = remember { mutableStateOf(false) }
     val contactSelected = remember {
         mutableStateOf(
             User(
@@ -69,18 +72,15 @@ fun HomeScreen(
                 fullName = "",
                 email = "",
                 password = "",
-                image = "",
-                conversationsId = mutableListOf()
+                image = ""
             )
         )
     }
     val userId by dataStoreViewModel.userId.collectAsState(-1)
-    LaunchedEffect(userId) {
-        userViewModel.fetchUsers()
-        if (userId != -1L) {
-            userViewModel.getUserById(userId)
-        }
-    }
+
+    userViewModel.fetchUsers()
+    conversationViewModel.getConversationByUser(userId)
+    //userViewModel.getUserById(userId)
 
     val switch = remember {
         mutableStateOf("Descussions")
@@ -147,8 +147,9 @@ fun HomeScreen(
                         verticalArrangement = Arrangement.Top
                     ) {
                         Box(contentAlignment = Alignment.TopCenter) {
-                            when (userState) {
+                            when (conversationsState) {
                                 is ApiState.Loading -> {
+                                    // Show loading indicator
                                     CircularProgressIndicator(
                                         modifier = Modifier
                                             .align(Alignment.Center)
@@ -156,61 +157,46 @@ fun HomeScreen(
                                 }
 
                                 is ApiState.Success<*> -> {
-                                    val user = (userState as ApiState.Success<User>).data
+                                    val conversations = (conversationsState as ApiState.Success<List<Conversation>>).data
                                     Column {
                                         LazyColumn(modifier = Modifier.fillMaxSize()) {
-                                            items(
-                                                items = user.conversationsId,
-                                                itemContent = { id ->
-                                                    conversationViewModel.getConversationById(id)
-                                                    val conversationState =
-                                                        conversationViewModel.conversation.value
-                                                    when (conversationState) {
-                                                        is ApiState.Success<*> -> {
-                                                            Card(modifier = Modifier
-                                                                .padding(8.dp)
-                                                                .clickable {
-                                                                    navController.navigate(
-                                                                        Screen.MessagingScreen.name
-                                                                    )
-                                                                }, onClick = {
-                                                                navController.navigate(Screen.MessagingScreen.name)
-                                                            }) {
-                                                                Row(
-                                                                    modifier = Modifier
-                                                                        .fillMaxWidth()
-                                                                        .padding(8.dp),
-                                                                    horizontalArrangement = Arrangement.Start,
-                                                                    verticalAlignment = Alignment.CenterVertically
-                                                                ) {
-                                                                    Icon(
-                                                                        imageVector = Icons.Default.AccountCircle,
-                                                                        contentDescription = "",
-                                                                        modifier = Modifier.size(65.dp)
-                                                                    )
-                                                                    Column(
-                                                                        modifier = Modifier,
-                                                                        horizontalAlignment = Alignment.Start,
-                                                                        verticalArrangement = Arrangement.Center
-                                                                    ) {
+                                            items(items = conversations, itemContent = { conversation ->
+                                                Card(modifier = Modifier
+                                                    .padding(8.dp)
+                                                    .clickable {
 
-                                                                        Text(text = id.toString())
-                                                                        Text(text = (conversationState as ApiState.Success<Conversation>).data.toString())
-                                                                    }
-                                                                }
-                                                            }
+                                                    }, onClick = {
+                                                    navController.navigate(Screen.MessagingScreen.name)
+                                                }) {
+                                                    Row(
+                                                        modifier = Modifier
+                                                            .fillMaxWidth()
+                                                            .padding(8.dp),
+                                                        horizontalArrangement = Arrangement.Start,
+                                                        verticalAlignment = Alignment.CenterVertically
+                                                    ) {
+                                                        Icon(
+                                                            imageVector = Icons.Default.AccountCircle,
+                                                            contentDescription = "",
+                                                            modifier = Modifier.size(65.dp)
+                                                        )
+                                                        Column(
+                                                            modifier = Modifier,
+                                                            horizontalAlignment = Alignment.Start,
+                                                            verticalArrangement = Arrangement.Center
+                                                        ) {
+                                                            Text(text = conversation.id.toString())
+                                                            Text(text = conversation.toString())
                                                         }
-
-                                                        else -> {}
                                                     }
-
-                                                })
+                                                }
+                                            })
                                         }
                                     }
                                 }
 
                                 is ApiState.Error -> {
-                                    val error = (userState as ApiState.Error).message
+                                    val error = (conversationsState as ApiState.Error).message
                                     Text(
                                         text = "Failed to fetch data: $error",
                                         modifier = Modifier
@@ -221,7 +207,6 @@ fun HomeScreen(
                                 }
                             }
                         }
-
                     }
                 }
 
@@ -386,7 +371,7 @@ fun HomeScreen(
             }
         }
     }
-    val conversationState = conversationViewModel.conversation.value
+    //val conversationState = conversationViewModel.conversation.value
     if (shouldShowDialog.value) {
         AlertDialog(
             onDismissRequest = {
@@ -397,14 +382,15 @@ fun HomeScreen(
             confirmButton = {
                 Button(
                     onClick = {
-                        val contactsId = listOf<Long>(contactSelected.value.id, userId)
-                        val messagesId = listOf<Long>()
-                        conversationViewModel.newConversation(
-                            newConversation(
-                                contactsId,
-                                messagesId
-                            )
-                        )
+//                        val contactsId = listOf<Long>(contactSelected.value.id, userId)
+//                        val messagesId = listOf<Long>()
+//                        conversationViewModel.newConversation(
+//                            newConversation(
+//                                contactsId,
+//                                messagesId
+//                            )
+//                        )
+                        conversationViewModel.newConversation(newConversation(userId,contactSelected.value.id))
                         shouldShowDialog.value = false
                     }
                 ) {
@@ -429,34 +415,76 @@ fun HomeScreen(
     }
 
     LaunchedEffect(conversationState) {
-        when (conversationState) {
-            is ApiState.Loading -> {
-            }
-
-            is ApiState.Success<*> -> {
+        when (conversationState){
+            is ApiState.Success<*> ->{
                 val conversation = (conversationState as ApiState.Success<Conversation>).data
                 Toast.makeText(
                     context,
                     "Success to create new conversation $conversation",
                     Toast.LENGTH_LONG
                 ).show()
-                userViewModel.getUserById(userId)
-                val user = (userState as ApiState.Success<User>).data
-                user.conversationsId.add(conversation.id)
-                userViewModel.updateUser(user)
             }
-
-            is ApiState.Error -> {
+            is ApiState.Error ->{
                 val error = (conversationState as ApiState.Error).message
                 Toast.makeText(
                     context,
                     "Failed to create new conversation : $error",
                     Toast.LENGTH_LONG
                 ).show()
+            }
+            else ->{
 
             }
         }
+
     }
+
+    /*
+        LaunchedEffect(conversationState) {
+            if (isConversationCreated.value) return@LaunchedEffect
+            when (conversationState) {
+                is ApiState.Loading -> {
+                }
+
+                is ApiState.Success<*> -> {
+                    val conversation = (conversationState as ApiState.Success<Conversation>).data
+                    Toast.makeText(
+                        context,
+                        "Success to create new conversation $conversation",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    userViewModel.getUserById(userId)
+                    when (userState) {
+                        is ApiState.Success<*> -> {
+                            val user = (userState as ApiState.Success<User>).data
+                            val updatedConversationsId = user.conversationsId.toMutableList().apply {
+                                add(conversation.id)
+                            }
+                            val newUser = user
+                            newUser.conversationsId = updatedConversationsId
+                            userViewModel.updateUser(newUser)
+                            isConversationCreated.value = true
+                        }
+                        else -> {}
+                    }
+
+                }
+
+                is ApiState.Error -> {
+                    val error = (conversationState as ApiState.Error).message
+                    Toast.makeText(
+                        context,
+                        "Failed to create new conversation : $error",
+                        Toast.LENGTH_LONG
+                    ).show()
+
+                }
+            }
+        }
+        LaunchedEffect(contactSelected.value) {
+            isConversationCreated.value = false
+        }
+        */
 }
 
 @Composable
