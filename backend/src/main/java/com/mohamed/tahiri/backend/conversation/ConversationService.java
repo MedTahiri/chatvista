@@ -7,6 +7,9 @@ import com.mohamed.tahiri.backend.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,21 +43,34 @@ public class ConversationService {
             String fullName = "";
             if (conversations.get(i).getCreatorId() == userid) {
                 fullName = userRepository.findById(conversations.get(i).getParticipantId())
-                        .orElse(new User()) // Provide a default User object
+                        .orElse(new User())
                         .getFullName();
             } else if (conversations.get(i).getParticipantId() == userid) {
                 fullName = userRepository.findById(conversations.get(i).getCreatorId())
-                        .orElse(new User()) // Provide a default User object
+                        .orElse(new User())
                         .getFullName();
             }
 
             List<Message> messages = messageService.allMessages(id);
             String lastMessage = messages.isEmpty() ? "No messages" : messages.getLast().getContent();
-            String time = messages.isEmpty() ? "" : messages.getLast().getDateSending();
+            String time = messages.isEmpty() ? "1970-01-01 00:00:00" : messages.getLast().getDateSending();
 
             ConversationTitle ct = new ConversationTitle(id, fullName, lastMessage, time);
             conversationTitle.add(ct);
+
         }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        conversationTitle.sort((ct1, ct2) -> {
+            try {
+                LocalDateTime time1 = LocalDateTime.parse(ct1.time, formatter);
+                LocalDateTime time2 = LocalDateTime.parse(ct2.time, formatter);
+                return time2.compareTo(time1);
+            } catch (DateTimeParseException e) {
+                return 0;
+            }
+        });
+
 
         return conversationTitle;
     }
