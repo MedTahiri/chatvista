@@ -9,9 +9,40 @@ import java.util.List;
 public class Conversation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+    private Long id;
+    private Long creatorId;
+    private Long participantId;
 
-    public List<Long> contactsId;
+    public Conversation() {
 
-    public List<Long> messagesId;
+    }
+
+    public Conversation(Long creatorId, Long participantId) {
+        this.creatorId = creatorId;
+        this.participantId = participantId;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getCreatorId() {
+        return creatorId;
+    }
+
+    public void setCreatorId(Long creatorId) {
+        this.creatorId = creatorId;
+    }
+
+    public Long getParticipantId() {
+        return participantId;
+    }
+
+    public void setParticipantId(Long participantId) {
+        this.participantId = participantId;
+    }
 }
