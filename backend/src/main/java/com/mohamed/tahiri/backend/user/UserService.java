@@ -16,8 +16,7 @@ public class UserService {
     }
 
     public User getUserById(long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+        return userRepository.findById(id).get();
     }
 
     public User getUser(String email, String password) {

@@ -3,6 +3,8 @@ package com.mohamed.tahiri.backend.conversation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/conversation")
 public class ConversationController {
@@ -17,6 +19,11 @@ public class ConversationController {
     @PostMapping("/new")
     public Conversation newConversation(@RequestBody Conversation conversation) {
         return conversationService.createConversation(conversation);
+    }
+
+    @GetMapping("/my/{userid}")
+    public List<Conversation> allConversations(@PathVariable("userid") Long userid) {
+        return conversationService.allConversations(userid);
     }
 
 }
