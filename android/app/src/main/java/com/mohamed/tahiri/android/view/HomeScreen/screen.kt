@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.mohamed.tahiri.android.Screen
 import com.mohamed.tahiri.android.model.Conversation
+import com.mohamed.tahiri.android.model.ConversationTitle
 import com.mohamed.tahiri.android.model.User
 import com.mohamed.tahiri.android.model.newConversation
 import com.mohamed.tahiri.android.ui.theme.AndroidTheme
@@ -50,6 +51,7 @@ import com.mohamed.tahiri.android.viewmodel.ApiState
 import com.mohamed.tahiri.android.viewmodel.ConversationViewModel
 import com.mohamed.tahiri.android.viewmodel.DataStoreViewModel
 import com.mohamed.tahiri.android.viewmodel.UserViewModel
+import kotlinx.coroutines.delay
 
 @Composable
 fun HomeScreen(
@@ -78,9 +80,14 @@ fun HomeScreen(
     }
     val userId by dataStoreViewModel.userId.collectAsState(-1)
 
-    userViewModel.fetchUsers()
-    conversationViewModel.getConversationByUser(userId)
-    //userViewModel.getUserById(userId)
+
+    LaunchedEffect(userId) {
+        while (true) {
+            delay(2500) // Wait for 2.5 seconds
+            userViewModel.fetchUsers()
+            conversationViewModel.getConversationByUser(userId)
+        }
+    }
 
     val switch = remember {
         mutableStateOf("Descussions")
@@ -149,7 +156,6 @@ fun HomeScreen(
                         Box(contentAlignment = Alignment.TopCenter) {
                             when (conversationsState) {
                                 is ApiState.Loading -> {
-                                    // Show loading indicator
                                     CircularProgressIndicator(
                                         modifier = Modifier
                                             .align(Alignment.Center)
@@ -158,7 +164,7 @@ fun HomeScreen(
 
                                 is ApiState.Success<*> -> {
                                     val conversations =
-                                        (conversationsState as ApiState.Success<List<Conversation>>).data
+                                        (conversationsState as ApiState.Success<List<ConversationTitle>>).data
                                     Column {
                                         LazyColumn(modifier = Modifier.fillMaxSize()) {
                                             items(
@@ -166,7 +172,7 @@ fun HomeScreen(
                                                 itemContent = { conversation ->
                                                     Card(modifier = Modifier
                                                         .padding(8.dp), onClick = {
-                                                            navController.navigate(Screen.MessagingScreen.name + "/${conversation.id}")
+                                                        navController.navigate(Screen.MessagingScreen.name + "/${conversation.id}")
                                                     }) {
                                                         Row(
                                                             modifier = Modifier
@@ -185,8 +191,9 @@ fun HomeScreen(
                                                                 horizontalAlignment = Alignment.Start,
                                                                 verticalArrangement = Arrangement.Center
                                                             ) {
-                                                                Text(text = conversation.id.toString())
-                                                                Text(text = conversation.toString())
+                                                                Text(text = conversation.fullName)
+                                                                Text(text = conversation.lastMessage)
+                                                                Text(text = conversation.time)
                                                             }
                                                         }
                                                     }

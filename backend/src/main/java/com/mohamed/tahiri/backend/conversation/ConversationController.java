@@ -22,7 +22,7 @@ public class ConversationController {
     }
 
     @GetMapping("/my/{userid}")
-    public List<Conversation> allConversations(@PathVariable("userid") Long userid) {
+    public List<ConversationTitle> allConversations(@PathVariable("userid") Long userid) {
         return conversationService.allConversations(userid);
     }
 
