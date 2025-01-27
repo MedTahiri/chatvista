@@ -54,8 +54,7 @@ fun MessagingScreen(
 ) {
     var text by remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
-    //val messages = remember { mutableStateListOf<newMessage>() } // Fix: Use remember to persist messages
-    val userId by dataStoreViewModel.userId.collectAsState(-1) // Fix: Define the current user
+    val userId by dataStoreViewModel.userId.collectAsState(-1)
     val messagesState = messageViewModel.messages.value
     val messageState = messageViewModel.message.value
     messageViewModel.getMessagesByConversation(conversationId)
@@ -69,7 +68,6 @@ fun MessagingScreen(
 
             when (messagesState) {
                 is ApiState.Loading -> {
-                    // Show loading indicator
                     CircularProgressIndicator(
                         modifier = Modifier
                             .align(Alignment.Center)
@@ -78,25 +76,23 @@ fun MessagingScreen(
 
                 is ApiState.Success<*> -> {
                     val messages = (messagesState as ApiState.Success<List<Message>>).data
-                    // Message List
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
-                            //.weight(1f)
                             .padding(horizontal = 8.dp),
-                        reverseLayout = true // Show latest messages at the bottom
+                        reverseLayout = true
                     ) {
                         items(messages.reversed()) { message ->
                             val isFromMe =
-                                message.senderId.toInt() == userId.toInt() // Fix: Determine if the message is from the current user
+                                message.senderId.toInt() == userId.toInt()
                             val bubbleColor = if (isFromMe) Color(0xFF4CAF50) else Color(0xFFE0E0E0)
-                            val bubbleAlignment = if (isFromMe) Alignment.TopEnd else Alignment.TopStart
+                            val bubbleAlignment =
+                                if (isFromMe) Alignment.TopEnd else Alignment.TopStart
 
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(8.dp)
-                                , contentAlignment = bubbleAlignment
+                                    .padding(8.dp), contentAlignment = bubbleAlignment
                             ) {
                                 Column(
                                     modifier = Modifier
@@ -137,8 +133,6 @@ fun MessagingScreen(
             }
 
         }
-
-        // Message Input
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -155,16 +149,6 @@ fun MessagingScreen(
             )
             Button(onClick = {
                 if (text.isNotBlank()) {
-                    // Fix: Add the new message to the list
-//                    messages.add(
-//                        newMessage(
-//                            content = text,
-//                            dateSending = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-//                                .format(LocalDateTime.now()),
-//                            senderId = 1,
-//                            conversationId = 1,
-//                        )
-//                    )
                     messageViewModel.newMessage(
                         newMessage(
                             content = text,
@@ -184,7 +168,7 @@ fun MessagingScreen(
     }
 
     LaunchedEffect(messageState) {
-        when(messageState){
+        when (messageState) {
             is ApiState.Error -> {}
             is ApiState.Loading -> {}
             is ApiState.Success -> {
@@ -192,6 +176,7 @@ fun MessagingScreen(
             }
         }
     }
+
 
 }
 
