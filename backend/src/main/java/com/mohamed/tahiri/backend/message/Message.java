@@ -12,7 +12,7 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String content;
-    private LocalDateTime dateSending;
+    private String dateSending;
     private Long senderId;
     private Long conversationId;
 
@@ -20,9 +20,9 @@ public class Message {
 
     }
 
-    public Message(String content, Long senderId, Long conversationId) {
+    public Message(String content, String dateSending, Long senderId, Long conversationId) {
         this.content = content;
-        this.dateSending = LocalDateTime.now();
+        this.dateSending = dateSending;
         this.senderId = senderId;
         this.conversationId = conversationId;
     }
@@ -43,11 +43,11 @@ public class Message {
         this.content = content;
     }
 
-    public LocalDateTime getDateSending() {
+    public String getDateSending() {
         return dateSending;
     }
 
-    public void setDateSending(LocalDateTime dateSending) {
+    public void setDateSending(String dateSending) {
         this.dateSending = dateSending;
     }
 

@@ -1,12 +1,31 @@
 package com.mohamed.tahiri.android.view.MessagingScreen
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -16,61 +35,107 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import com.mohamed.tahiri.android.model.message
+import com.mohamed.tahiri.android.model.Message
 import com.mohamed.tahiri.android.model.newMessage
 import com.mohamed.tahiri.android.ui.theme.AndroidTheme
+import com.mohamed.tahiri.android.viewmodel.ApiState
+import com.mohamed.tahiri.android.viewmodel.DataStoreViewModel
+import com.mohamed.tahiri.android.viewmodel.MessageViewModel
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MessagingScreen(navController: NavHostController) {
+fun MessagingScreen(
+    navController: NavHostController,
+    messageViewModel: MessageViewModel,
+    dataStoreViewModel: DataStoreViewModel,
+    conversationId: Long
+) {
     var text by remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
-    val messages = remember { mutableStateListOf<newMessage>() } // Fix: Use remember to persist messages
-    val currentUser = 0 // Fix: Define the current user
-
+    //val messages = remember { mutableStateListOf<newMessage>() } // Fix: Use remember to persist messages
+    val userId by dataStoreViewModel.userId.collectAsState(-1) // Fix: Define the current user
+    val messagesState = messageViewModel.messages.value
+    val messageState = messageViewModel.message.value
+    messageViewModel.getMessagesByConversation(conversationId)
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
     ) {
-        // Message List
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .weight(1f)
-                .padding(horizontal = 8.dp),
-            reverseLayout = true // Show latest messages at the bottom
-        ) {
-            items(messages.reversed()) { message ->
-                val isFromMe = message.senderId.toInt() == currentUser // Fix: Determine if the message is from the current user
-                val bubbleColor = if (isFromMe) Color(0xFF4CAF50) else Color(0xFFE0E0E0)
-                val bubbleAlignment = if (isFromMe) Alignment.End else Alignment.Start
+        Text(conversationId.toString())
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.weight(1f)) {
 
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                ) {
-                    Column(
+            when (messagesState) {
+                is ApiState.Loading -> {
+                    // Show loading indicator
+                    CircularProgressIndicator(
                         modifier = Modifier
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(bubbleColor)
-                            .padding(12.dp)
+                            .align(Alignment.Center)
+                    )
+                }
+
+                is ApiState.Success<*> -> {
+                    val messages = (messagesState as ApiState.Success<List<Message>>).data
+                    // Message List
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            //.weight(1f)
+                            .padding(horizontal = 8.dp),
+                        reverseLayout = true // Show latest messages at the bottom
                     ) {
-                        Text(
-                            text = message.content,
-                            color = if (isFromMe) Color.White else Color.Black,
-                            fontSize = 16.sp
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = message.senderId.toString(),
-                            color = if (isFromMe) Color.White.copy(alpha = 0.7f) else Color.Black.copy(alpha = 0.7f),
-                            fontSize = 12.sp
-                        )
+                        items(messages.reversed()) { message ->
+                            val isFromMe =
+                                message.senderId.toInt() == userId.toInt() // Fix: Determine if the message is from the current user
+                            val bubbleColor = if (isFromMe) Color(0xFF4CAF50) else Color(0xFFE0E0E0)
+                            val bubbleAlignment = if (isFromMe) Alignment.TopEnd else Alignment.TopStart
+
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp)
+                                , contentAlignment = bubbleAlignment
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(bubbleColor)
+                                        .padding(12.dp)
+                                ) {
+                                    Text(
+                                        text = message.content,
+                                        color = if (isFromMe) Color.White else Color.Black,
+                                        fontSize = 16.sp
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = message.dateSending,
+                                        color = if (isFromMe) Color.White.copy(alpha = 0.7f) else Color.Black.copy(
+                                            alpha = 0.7f
+                                        ),
+                                        fontSize = 12.sp
+                                    )
+                                }
+                            }
+                        }
                     }
+
+                }
+
+                is ApiState.Error -> {
+                    val error = (messagesState as ApiState.Error).message
+                    Text(
+                        text = "Failed to fetch messages: $error",
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxWidth()
+                            .align(Alignment.Center)
+                    )
                 }
             }
+
         }
 
         // Message Input
@@ -91,11 +156,22 @@ fun MessagingScreen(navController: NavHostController) {
             Button(onClick = {
                 if (text.isNotBlank()) {
                     // Fix: Add the new message to the list
-                    messages.add(
+//                    messages.add(
+//                        newMessage(
+//                            content = text,
+//                            dateSending = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+//                                .format(LocalDateTime.now()),
+//                            senderId = 1,
+//                            conversationId = 1,
+//                        )
+//                    )
+                    messageViewModel.newMessage(
                         newMessage(
                             content = text,
-                            senderId = 1,
-                            conversationId = 1,
+                            senderId = userId,
+                            dateSending = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                                .format(LocalDateTime.now()),
+                            conversationId = conversationId,
                         )
                     )
                     text = ""
@@ -106,12 +182,23 @@ fun MessagingScreen(navController: NavHostController) {
             }
         }
     }
+
+    LaunchedEffect(messageState) {
+        when(messageState){
+            is ApiState.Error -> {}
+            is ApiState.Loading -> {}
+            is ApiState.Success -> {
+                messageViewModel.getMessagesByConversation(conversationId)
+            }
+        }
+    }
+
 }
 
 @Preview(showBackground = true)
 @Composable
 fun PreviewMessagingScreen() {
     AndroidTheme {
-        MessagingScreen(rememberNavController())
+        //MessagingScreen(rememberNavController(), messageViewModel, dataStoreViewModel, -1)
     }
 }

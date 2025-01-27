@@ -157,40 +157,40 @@ fun HomeScreen(
                                 }
 
                                 is ApiState.Success<*> -> {
-                                    val conversations = (conversationsState as ApiState.Success<List<Conversation>>).data
+                                    val conversations =
+                                        (conversationsState as ApiState.Success<List<Conversation>>).data
                                     Column {
                                         LazyColumn(modifier = Modifier.fillMaxSize()) {
-                                            items(items = conversations, itemContent = { conversation ->
-                                                Card(modifier = Modifier
-                                                    .padding(8.dp)
-                                                    .clickable {
-
-                                                    }, onClick = {
-                                                    navController.navigate(Screen.MessagingScreen.name)
-                                                }) {
-                                                    Row(
-                                                        modifier = Modifier
-                                                            .fillMaxWidth()
-                                                            .padding(8.dp),
-                                                        horizontalArrangement = Arrangement.Start,
-                                                        verticalAlignment = Alignment.CenterVertically
-                                                    ) {
-                                                        Icon(
-                                                            imageVector = Icons.Default.AccountCircle,
-                                                            contentDescription = "",
-                                                            modifier = Modifier.size(65.dp)
-                                                        )
-                                                        Column(
-                                                            modifier = Modifier,
-                                                            horizontalAlignment = Alignment.Start,
-                                                            verticalArrangement = Arrangement.Center
+                                            items(
+                                                items = conversations,
+                                                itemContent = { conversation ->
+                                                    Card(modifier = Modifier
+                                                        .padding(8.dp), onClick = {
+                                                            navController.navigate(Screen.MessagingScreen.name + "/${conversation.id}")
+                                                    }) {
+                                                        Row(
+                                                            modifier = Modifier
+                                                                .fillMaxWidth()
+                                                                .padding(8.dp),
+                                                            horizontalArrangement = Arrangement.Start,
+                                                            verticalAlignment = Alignment.CenterVertically
                                                         ) {
-                                                            Text(text = conversation.id.toString())
-                                                            Text(text = conversation.toString())
+                                                            Icon(
+                                                                imageVector = Icons.Default.AccountCircle,
+                                                                contentDescription = "",
+                                                                modifier = Modifier.size(65.dp)
+                                                            )
+                                                            Column(
+                                                                modifier = Modifier,
+                                                                horizontalAlignment = Alignment.Start,
+                                                                verticalArrangement = Arrangement.Center
+                                                            ) {
+                                                                Text(text = conversation.id.toString())
+                                                                Text(text = conversation.toString())
+                                                            }
                                                         }
                                                     }
-                                                }
-                                            })
+                                                })
                                         }
                                     }
                                 }
@@ -390,7 +390,12 @@ fun HomeScreen(
 //                                messagesId
 //                            )
 //                        )
-                        conversationViewModel.newConversation(newConversation(userId,contactSelected.value.id))
+                        conversationViewModel.newConversation(
+                            newConversation(
+                                userId,
+                                contactSelected.value.id
+                            )
+                        )
                         shouldShowDialog.value = false
                     }
                 ) {
@@ -415,8 +420,8 @@ fun HomeScreen(
     }
 
     LaunchedEffect(conversationState) {
-        when (conversationState){
-            is ApiState.Success<*> ->{
+        when (conversationState) {
+            is ApiState.Success<*> -> {
                 val conversation = (conversationState as ApiState.Success<Conversation>).data
                 Toast.makeText(
                     context,
@@ -424,7 +429,8 @@ fun HomeScreen(
                     Toast.LENGTH_LONG
                 ).show()
             }
-            is ApiState.Error ->{
+
+            is ApiState.Error -> {
                 val error = (conversationState as ApiState.Error).message
                 Toast.makeText(
                     context,
@@ -432,7 +438,8 @@ fun HomeScreen(
                     Toast.LENGTH_LONG
                 ).show()
             }
-            else ->{
+
+            else -> {
 
             }
         }

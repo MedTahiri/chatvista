@@ -11,9 +11,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.mohamed.tahiri.android.ui.theme.AndroidTheme
 import com.mohamed.tahiri.android.view.HomeScreen.HomeScreen
 import com.mohamed.tahiri.android.view.LoginScreen.LoginScreen
@@ -23,6 +25,7 @@ import com.mohamed.tahiri.android.view.SignupScreen.SignupScreen
 import com.mohamed.tahiri.android.view.SplashScreen.SplashScreen
 import com.mohamed.tahiri.android.viewmodel.ConversationViewModel
 import com.mohamed.tahiri.android.viewmodel.DataStoreViewModel
+import com.mohamed.tahiri.android.viewmodel.MessageViewModel
 import com.mohamed.tahiri.android.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -31,6 +34,7 @@ class MainActivity : ComponentActivity() {
     private val userViewModel: UserViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
     private val conversationViewModel: ConversationViewModel by viewModels()
+    private val messageViewModel: MessageViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -40,7 +44,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Main(userViewModel, dataStoreViewModel, conversationViewModel)
+                    Main(userViewModel, dataStoreViewModel, conversationViewModel, messageViewModel)
                 }
             }
         }
@@ -51,7 +55,8 @@ class MainActivity : ComponentActivity() {
 fun Main(
     userViewModel: UserViewModel,
     dataStoreViewModel: DataStoreViewModel,
-    conversationViewModel: ConversationViewModel
+    conversationViewModel: ConversationViewModel,
+    messageViewModel: MessageViewModel
 ) {
     val context = LocalContext.current
     val navController = rememberNavController()
@@ -88,10 +93,12 @@ fun Main(
                 context
             )
         }
-        composable(Screen.MessagingScreen.name) {
-            MessagingScreen(
-                navController
-            )
+        composable(
+            Screen.MessagingScreen.name + "/{conversationId}",
+            arguments = listOf(navArgument("conversationId") { type = NavType.LongType })
+        ) { backStackEntry ->
+            val conversationId = backStackEntry.arguments?.getLong("conversationId") ?: -1
+            MessagingScreen(navController, messageViewModel, dataStoreViewModel, conversationId)
         }
         composable(Screen.ProfileScreen.name) {
             ProfileScreen(

@@ -30,5 +30,11 @@ interface ApiService {
     suspend fun getConversationById(@Path("id") id: Long): Conversation
 
     @GET("conversation/my/{userid}")
-    suspend fun getConversationByUser(@Path("userid") userId: Long) : List<Conversation>
+    suspend fun getConversationByUser(@Path("userid") userId: Long): List<Conversation>
+
+    @POST("message/new")
+    suspend fun newMessage(@Body message: newMessage): Message
+
+    @GET("message/my/{conversationId}")
+    suspend fun getMessagesByConversation(@Path("conversationId") conversationId: Long): List<Message>
 }
