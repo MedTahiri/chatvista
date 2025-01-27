@@ -41,6 +41,7 @@ import com.mohamed.tahiri.android.ui.theme.AndroidTheme
 import com.mohamed.tahiri.android.viewmodel.ApiState
 import com.mohamed.tahiri.android.viewmodel.DataStoreViewModel
 import com.mohamed.tahiri.android.viewmodel.MessageViewModel
+import kotlinx.coroutines.delay
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -57,7 +58,18 @@ fun MessagingScreen(
     val userId by dataStoreViewModel.userId.collectAsState(-1)
     val messagesState = messageViewModel.messages.value
     val messageState = messageViewModel.message.value
-    messageViewModel.getMessagesByConversation(conversationId)
+
+    LaunchedEffect(conversationId) {
+        messageViewModel.getMessagesByConversation(conversationId)
+    }
+
+    LaunchedEffect(conversationId) {
+        while (true) {
+            delay(2500) // Wait for 2.5 seconds
+            messageViewModel.getMessagesByConversation(conversationId)
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
