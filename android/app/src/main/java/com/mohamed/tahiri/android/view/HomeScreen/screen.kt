@@ -64,9 +64,7 @@ fun HomeScreen(
     val usersState = userViewModel.users.value
     val conversationsState = conversationViewModel.conversationByUser.value
     val conversationState = conversationViewModel.conversation.value
-    //val userState = userViewModel.user.value
     val shouldShowDialog = remember { mutableStateOf(false) }
-    //val isConversationCreated = remember { mutableStateOf(false) }
     val contactSelected = remember {
         mutableStateOf(
             User(
@@ -83,7 +81,7 @@ fun HomeScreen(
 
     LaunchedEffect(userId) {
         while (true) {
-            delay(2500) // Wait for 2.5 seconds
+            delay(2500)
             userViewModel.fetchUsers()
             conversationViewModel.getConversationByUser(userId)
         }
@@ -172,7 +170,7 @@ fun HomeScreen(
                                                 itemContent = { conversation ->
                                                     Card(modifier = Modifier
                                                         .padding(8.dp), onClick = {
-                                                        navController.navigate(Screen.MessagingScreen.name + "/${conversation.id}")
+                                                        navController.navigate(Screen.MessagingScreen.name + "/${conversation.id}/${conversation.fullName}")
                                                     }) {
                                                         Row(
                                                             modifier = Modifier
@@ -270,7 +268,6 @@ fun HomeScreen(
                         Box(contentAlignment = Alignment.TopCenter) {
                             when (usersState) {
                                 is ApiState.Loading -> {
-                                    // Show loading indicator
                                     CircularProgressIndicator(
                                         modifier = Modifier
                                             .align(Alignment.Center)
@@ -378,7 +375,6 @@ fun HomeScreen(
             }
         }
     }
-    //val conversationState = conversationViewModel.conversation.value
     if (shouldShowDialog.value) {
         AlertDialog(
             onDismissRequest = {
@@ -389,14 +385,6 @@ fun HomeScreen(
             confirmButton = {
                 Button(
                     onClick = {
-//                        val contactsId = listOf<Long>(contactSelected.value.id, userId)
-//                        val messagesId = listOf<Long>()
-//                        conversationViewModel.newConversation(
-//                            newConversation(
-//                                contactsId,
-//                                messagesId
-//                            )
-//                        )
                         conversationViewModel.newConversation(
                             newConversation(
                                 userId,
@@ -452,53 +440,6 @@ fun HomeScreen(
         }
 
     }
-
-    /*
-        LaunchedEffect(conversationState) {
-            if (isConversationCreated.value) return@LaunchedEffect
-            when (conversationState) {
-                is ApiState.Loading -> {
-                }
-
-                is ApiState.Success<*> -> {
-                    val conversation = (conversationState as ApiState.Success<Conversation>).data
-                    Toast.makeText(
-                        context,
-                        "Success to create new conversation $conversation",
-                        Toast.LENGTH_LONG
-                    ).show()
-                    userViewModel.getUserById(userId)
-                    when (userState) {
-                        is ApiState.Success<*> -> {
-                            val user = (userState as ApiState.Success<User>).data
-                            val updatedConversationsId = user.conversationsId.toMutableList().apply {
-                                add(conversation.id)
-                            }
-                            val newUser = user
-                            newUser.conversationsId = updatedConversationsId
-                            userViewModel.updateUser(newUser)
-                            isConversationCreated.value = true
-                        }
-                        else -> {}
-                    }
-
-                }
-
-                is ApiState.Error -> {
-                    val error = (conversationState as ApiState.Error).message
-                    Toast.makeText(
-                        context,
-                        "Failed to create new conversation : $error",
-                        Toast.LENGTH_LONG
-                    ).show()
-
-                }
-            }
-        }
-        LaunchedEffect(contactSelected.value) {
-            isConversationCreated.value = false
-        }
-        */
 }
 
 @Composable

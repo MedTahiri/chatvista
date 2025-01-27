@@ -94,11 +94,21 @@ fun Main(
             )
         }
         composable(
-            Screen.MessagingScreen.name + "/{conversationId}",
-            arguments = listOf(navArgument("conversationId") { type = NavType.LongType })
+            Screen.MessagingScreen.name + "/{conversationId}/{fullname}",
+            arguments = listOf(navArgument("conversationId") { type = NavType.LongType },
+                navArgument("fullname") { type = NavType.StringType }
+            )
         ) { backStackEntry ->
             val conversationId = backStackEntry.arguments?.getLong("conversationId") ?: -1
-            MessagingScreen(navController, messageViewModel, dataStoreViewModel, conversationId)
+            val fullname = backStackEntry.arguments?.getString("fullname") ?: ""
+            MessagingScreen(
+                navController,
+                messageViewModel,
+                conversationViewModel,
+                dataStoreViewModel,
+                conversationId,
+                fullname
+            )
         }
         composable(Screen.ProfileScreen.name) {
             ProfileScreen(

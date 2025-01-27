@@ -12,13 +12,21 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -35,30 +43,34 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.mohamed.tahiri.android.Screen
 import com.mohamed.tahiri.android.model.Message
 import com.mohamed.tahiri.android.model.newMessage
 import com.mohamed.tahiri.android.ui.theme.AndroidTheme
 import com.mohamed.tahiri.android.viewmodel.ApiState
+import com.mohamed.tahiri.android.viewmodel.ConversationViewModel
 import com.mohamed.tahiri.android.viewmodel.DataStoreViewModel
 import com.mohamed.tahiri.android.viewmodel.MessageViewModel
 import kotlinx.coroutines.delay
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MessagingScreen(
     navController: NavHostController,
     messageViewModel: MessageViewModel,
+    conversationViewModel: ConversationViewModel,
     dataStoreViewModel: DataStoreViewModel,
-    conversationId: Long
+    conversationId: Long,
+    fullname: String
 ) {
     var text by remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
     val userId by dataStoreViewModel.userId.collectAsState(-1)
     val messagesState = messageViewModel.messages.value
     val messageState = messageViewModel.message.value
-
     LaunchedEffect(conversationId) {
         messageViewModel.getMessagesByConversation(conversationId)
     }
@@ -75,7 +87,30 @@ fun MessagingScreen(
             .fillMaxSize()
             .background(Color.White)
     ) {
-        Text(conversationId.toString())
+        TopAppBar(
+            title = {
+                Row(modifier = Modifier.fillMaxWidth(),Arrangement.Start,Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.AccountCircle,
+                        contentDescription = "",
+                        modifier = Modifier.size(48.dp)
+                    )
+                    Text(fullname)
+                }
+
+            },
+            modifier = Modifier.fillMaxWidth(),
+            navigationIcon = {
+                IconButton(onClick = {
+                    navController.navigate(Screen.HomeScreen.name)
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.KeyboardArrowLeft,
+                        contentDescription = "",
+                        modifier = Modifier.size(48.dp)
+                    )
+                }
+            })
         Box(contentAlignment = Alignment.Center, modifier = Modifier.weight(1f)) {
 
             when (messagesState) {
