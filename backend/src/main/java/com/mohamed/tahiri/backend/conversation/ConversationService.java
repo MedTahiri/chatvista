@@ -29,6 +29,14 @@ public class ConversationService {
     }
 
     public Conversation createConversation(Conversation conversation) {
+        List<Conversation> conversations = new ArrayList<>();
+        conversations.addAll(conversationRepository.getAllByCreatorIdAndParticipantId(conversation.getCreatorId(), conversation.getParticipantId()));
+        conversations.addAll(conversationRepository.getAllByCreatorIdAndParticipantId(conversation.getParticipantId(), conversation.getCreatorId()));
+
+        if (!conversations.isEmpty()) {
+            return conversations.getFirst();
+        }
+
         return conversationRepository.save(conversation);
     }
 
@@ -41,7 +49,7 @@ public class ConversationService {
         for (int i = 0; i < conversations.size(); i++) {
             Long id = conversations.get(i).getId();
             String fullName = "";
-            String image = "1";
+            String image = "0";
             if (conversations.get(i).getCreatorId() == userid) {
                 fullName = userRepository.findById(conversations.get(i).getParticipantId())
                         .orElse(new User())

@@ -10,12 +10,14 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class DataStoreViewModel @Inject constructor(private val dataStoreRepository: DataStoreRepository) : ViewModel() {
+class DataStoreViewModel @Inject constructor(private val dataStoreRepository: DataStoreRepository) :
+    ViewModel() {
     val userId: Flow<Long> = dataStoreRepository.currentUserId
-//    val userFullName: Flow<String> = dataStoreRepository.userFullName
+
+    //    val userFullName: Flow<String> = dataStoreRepository.userFullName
 //    val userEmail: Flow<String> = dataStoreRepository.userEmail
 //    val userPassword: Flow<String> = dataStoreRepository.userPassword
-//    val userImage: Flow<String> = dataStoreRepository.userImage
+    val userImage: Flow<String> = dataStoreRepository.userImage
 //    val userConversationsId: Flow<String> = dataStoreRepository.userConversationsId
 
     fun saveUserId(userId: Long) {
@@ -24,7 +26,7 @@ class DataStoreViewModel @Inject constructor(private val dataStoreRepository: Da
         }
     }
 
-//    fun saveUserFullName(fullName: String) {
+    //    fun saveUserFullName(fullName: String) {
 //        viewModelScope.launch {
 //            dataStoreRepository.saveUserFullName(fullName)
 //        }
@@ -42,11 +44,11 @@ class DataStoreViewModel @Inject constructor(private val dataStoreRepository: Da
 //        }
 //    }
 //
-//    fun saveUserImage(imageUrl: String) {
-//        viewModelScope.launch {
-//            dataStoreRepository.saveUserImage(imageUrl)
-//        }
-//    }
+    fun saveUserImage(image: String) {
+        viewModelScope.launch {
+            dataStoreRepository.saveUserImage(image)
+        }
+    }
 //
 //    fun saveUserConversationsId(conversationsId: String) {
 //        viewModelScope.launch {

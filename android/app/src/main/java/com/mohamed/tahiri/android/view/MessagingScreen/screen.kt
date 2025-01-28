@@ -2,6 +2,7 @@ package com.mohamed.tahiri.android.view.MessagingScreen
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,6 +25,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -38,15 +40,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.mohamed.tahiri.android.R
 import com.mohamed.tahiri.android.Screen
+import com.mohamed.tahiri.android.model.ImageMapper
 import com.mohamed.tahiri.android.model.Message
 import com.mohamed.tahiri.android.model.newMessage
 import com.mohamed.tahiri.android.ui.theme.AndroidTheme
+import com.mohamed.tahiri.android.view.InternetProblem
 import com.mohamed.tahiri.android.viewmodel.ApiState
 import com.mohamed.tahiri.android.viewmodel.ConversationViewModel
 import com.mohamed.tahiri.android.viewmodel.DataStoreViewModel
@@ -64,13 +71,17 @@ fun MessagingScreen(
     conversationViewModel: ConversationViewModel,
     dataStoreViewModel: DataStoreViewModel,
     conversationId: Long,
-    fullname: String
+    fullname: String,
+    image: String
 ) {
     var text by remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
     val userId by dataStoreViewModel.userId.collectAsState(-1)
     val messagesState = messageViewModel.messages.value
     val messageState = messageViewModel.message.value
+
+val imageMapper = ImageMapper()
+
     LaunchedEffect(conversationId) {
         messageViewModel.getMessagesByConversation(conversationId)
     }
@@ -90,10 +101,15 @@ fun MessagingScreen(
         TopAppBar(
             title = {
                 Row(modifier = Modifier.fillMaxWidth(),Arrangement.Start,Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Default.AccountCircle,
-                        contentDescription = "",
-                        modifier = Modifier.size(48.dp)
+                    val imageResource =
+                        imageMapper.getImage(image)
+                            ?: R.drawable.a
+
+                    Image(
+                        painter = painterResource(id = imageResource),
+                        contentDescription = "User Image",
+                        modifier = Modifier.size(48.dp),
+                        contentScale = ContentScale.Crop
                     )
                     Text(fullname)
                 }
@@ -115,10 +131,14 @@ fun MessagingScreen(
 
             when (messagesState) {
                 is ApiState.Loading -> {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                    )
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
 
                 is ApiState.Success<*> -> {
@@ -169,13 +189,9 @@ fun MessagingScreen(
 
                 is ApiState.Error -> {
                     val error = (messagesState as ApiState.Error).message
-                    Text(
-                        text = "Failed to fetch messages: $error",
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .fillMaxWidth()
-                            .align(Alignment.Center)
-                    )
+                    InternetProblem(onRetry = {
+                        navController.navigate(Screen.MessagingScreen.name)
+                    }, error = error)
                 }
             }
 

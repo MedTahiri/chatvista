@@ -162,12 +162,13 @@ fun SignupScreen(
 
             is ApiState.Success<*> -> {
                 val user = (userState as ApiState.Success<User>).data
-                Toast.makeText(
-                    context,
-                    "Success to create new user : $user",
-                    Toast.LENGTH_LONG
-                ).show()
+//                Toast.makeText(
+//                    context,
+//                    "Success to create new user : $user",
+//                    Toast.LENGTH_LONG
+//                ).show()
                 dataStoreViewModel.saveUserId(user.id)
+                dataStoreViewModel.saveUserImage(user.image)
                 navController.navigate(Screen.HomeScreen.name)
             }
 

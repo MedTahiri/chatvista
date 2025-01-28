@@ -28,7 +28,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.google.gson.Gson
 import com.mohamed.tahiri.android.Screen
 import com.mohamed.tahiri.android.model.User
 import com.mohamed.tahiri.android.ui.theme.AndroidTheme
@@ -51,7 +50,7 @@ fun LoginScreen(
         mutableStateOf("")
     }
     val userState = userViewModel.user.value
-    //val gson = Gson()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -135,13 +134,17 @@ fun LoginScreen(
 
             is ApiState.Success<*> -> {
                 val user = (userState as ApiState.Success<User>).data
-                Toast.makeText(
-                    context,
-                    "Success to log in",
-                    Toast.LENGTH_LONG
-                ).show()
-                dataStoreViewModel.saveUserId(user.id)
-                navController.navigate(Screen.HomeScreen.name)
+                if (user.fullName.isNullOrBlank() && user.email.isNullOrBlank()) {
+                    Toast.makeText(
+                        context,
+                        "Failed to log in : you account is not existe !",
+                        Toast.LENGTH_LONG
+                    ).show()
+                } else {
+                    dataStoreViewModel.saveUserId(user.id)
+                    dataStoreViewModel.saveUserImage(user.image)
+                    navController.navigate(Screen.HomeScreen.name)
+                }
             }
 
             is ApiState.Error -> {

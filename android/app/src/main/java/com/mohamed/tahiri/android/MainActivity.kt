@@ -1,9 +1,11 @@
 package com.mohamed.tahiri.android
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -51,6 +53,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Main(
     userViewModel: UserViewModel,
@@ -94,20 +97,24 @@ fun Main(
             )
         }
         composable(
-            Screen.MessagingScreen.name + "/{conversationId}/{fullname}",
-            arguments = listOf(navArgument("conversationId") { type = NavType.LongType },
-                navArgument("fullname") { type = NavType.StringType }
+            Screen.MessagingScreen.name + "/{conversationId}/{fullname}/{image}",
+            arguments = listOf(
+                navArgument("conversationId") { type = NavType.LongType },
+                navArgument("fullname") { type = NavType.StringType },
+                navArgument("image") { type = NavType.StringType }
             )
         ) { backStackEntry ->
             val conversationId = backStackEntry.arguments?.getLong("conversationId") ?: -1
             val fullname = backStackEntry.arguments?.getString("fullname") ?: ""
+            val image = backStackEntry.arguments?.getString("image") ?: "0"
             MessagingScreen(
                 navController,
                 messageViewModel,
                 conversationViewModel,
                 dataStoreViewModel,
                 conversationId,
-                fullname
+                fullname,
+                image
             )
         }
         composable(Screen.ProfileScreen.name) {
