@@ -4,5 +4,6 @@ data class ConversationTitle(
     val id: Long,
     val fullName: String,
     val lastMessage: String,
-    val time: String
+    val time: String,
+    val image:String
 )

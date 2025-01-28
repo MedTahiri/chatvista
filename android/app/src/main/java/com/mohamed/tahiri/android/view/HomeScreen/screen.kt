@@ -2,6 +2,7 @@ package com.mohamed.tahiri.android.view.HomeScreen
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -37,10 +38,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.mohamed.tahiri.android.R
 import com.mohamed.tahiri.android.Screen
 import com.mohamed.tahiri.android.model.Conversation
 import com.mohamed.tahiri.android.model.ConversationTitle
@@ -77,7 +83,18 @@ fun HomeScreen(
         )
     }
     val userId by dataStoreViewModel.userId.collectAsState(-1)
-
+    val images = mapOf(
+        "0" to R.drawable.a,
+        "1" to R.drawable.b,
+        "2" to R.drawable.c,
+        "3" to R.drawable.d,
+        "4" to R.drawable.e,
+        "5" to R.drawable.f,
+        "6" to R.drawable.g,
+        "7" to R.drawable.h,
+        "8" to R.drawable.i,
+        "9" to R.drawable.j
+    )
 
     LaunchedEffect(userId) {
         while (true) {
@@ -179,10 +196,12 @@ fun HomeScreen(
                                                             horizontalArrangement = Arrangement.Start,
                                                             verticalAlignment = Alignment.CenterVertically
                                                         ) {
-                                                            Icon(
-                                                                imageVector = Icons.Default.AccountCircle,
-                                                                contentDescription = "",
-                                                                modifier = Modifier.size(65.dp)
+                                                            val imageResource = images[conversation.image] ?: R.drawable.a
+                                                            Image(
+                                                                painter = painterResource(id = imageResource),
+                                                                contentDescription = "User Image",
+                                                                modifier = Modifier.size(65.dp),
+                                                                contentScale = ContentScale.Crop
                                                             )
                                                             Column(
                                                                 modifier = Modifier,
@@ -294,10 +313,12 @@ fun HomeScreen(
                                                         horizontalArrangement = Arrangement.Start,
                                                         verticalAlignment = Alignment.CenterVertically
                                                     ) {
-                                                        Icon(
-                                                            imageVector = Icons.Default.AccountCircle,
-                                                            contentDescription = "",
-                                                            modifier = Modifier.size(65.dp)
+                                                        val imageResource = images[user.image] ?: R.drawable.a
+                                                        Image(
+                                                            painter = painterResource(id = imageResource),
+                                                            contentDescription = "User Image",
+                                                            modifier = Modifier.size(65.dp),
+                                                            contentScale = ContentScale.Crop
                                                         )
                                                         Column(
                                                             modifier = Modifier,

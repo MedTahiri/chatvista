@@ -1,5 +1,6 @@
 package com.mohamed.tahiri.android.view.ProfileScreen
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -9,8 +10,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.res.imageResource
 import androidx.navigation.NavHostController
-import com.google.gson.Gson
+import com.mohamed.tahiri.android.R
 import com.mohamed.tahiri.android.Screen
 import com.mohamed.tahiri.android.model.User
 import com.mohamed.tahiri.android.viewmodel.ApiState
@@ -24,6 +27,19 @@ fun ProfileScreen(
     dataStoreViewModel: DataStoreViewModel
 ) {
     val userId by dataStoreViewModel.userId.collectAsState(initial = -1)
+
+    val images = mapOf(
+        "0" to R.drawable.a,
+        "1" to R.drawable.b,
+        "2" to R.drawable.c,
+        "3" to R.drawable.d,
+        "4" to R.drawable.e,
+        "5" to R.drawable.f,
+        "6" to R.drawable.g,
+        "7" to R.drawable.h,
+        "8" to R.drawable.i,
+        "9" to R.drawable.j
+    )
 
     userViewModel.getUserById(userId)
 
@@ -40,7 +56,13 @@ fun ProfileScreen(
     }
     val userState = userViewModel.user.value
     Column {
+
         Text(text = "User ID: ${currentUser.value.id}")
+        val imageResource = images[currentUser.value.image] ?: R.drawable.a
+        Image(
+            bitmap = ImageBitmap.imageResource(imageResource),
+            contentDescription = "User Image"
+        )
         Text(text = "Full Name: ${currentUser.value.fullName}")
         Text(text = "Email: ${currentUser.value.email}")
         Text(text = "Password: ${currentUser.value.password}")

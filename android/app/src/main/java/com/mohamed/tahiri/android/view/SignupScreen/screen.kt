@@ -27,9 +27,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.google.gson.Gson
+import com.mohamed.tahiri.android.R
 import com.mohamed.tahiri.android.Screen
 import com.mohamed.tahiri.android.model.User
 import com.mohamed.tahiri.android.model.newUser
@@ -38,6 +37,7 @@ import com.mohamed.tahiri.android.view.MyTextField
 import com.mohamed.tahiri.android.viewmodel.ApiState
 import com.mohamed.tahiri.android.viewmodel.DataStoreViewModel
 import com.mohamed.tahiri.android.viewmodel.UserViewModel
+import kotlin.random.Random
 
 @Composable
 fun SignupScreen(
@@ -59,6 +59,9 @@ fun SignupScreen(
     val confirmepassword = remember {
         mutableStateOf("")
     }
+
+    val i = Random.nextInt(0, 10)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -116,9 +119,7 @@ fun SignupScreen(
                 Button(
                     onClick = {
                         if (password.value == confirmepassword.value) {
-                            //val conversations: List<Long> = mutableListOf()
-                            val user: newUser =
-                                newUser(name.value, email.value, password.value, "")
+                            val user = newUser(name.value, email.value, password.value, i.toString())
 
                             userViewModel.createUser(user)
 
