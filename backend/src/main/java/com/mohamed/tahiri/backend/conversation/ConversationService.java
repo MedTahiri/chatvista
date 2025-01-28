@@ -41,21 +41,24 @@ public class ConversationService {
         for (int i = 0; i < conversations.size(); i++) {
             Long id = conversations.get(i).getId();
             String fullName = "";
+            String image = "1";
             if (conversations.get(i).getCreatorId() == userid) {
                 fullName = userRepository.findById(conversations.get(i).getParticipantId())
                         .orElse(new User())
                         .getFullName();
+                image = userRepository.findById(conversations.get(i).getParticipantId()).orElse(new User()).getImage();
             } else if (conversations.get(i).getParticipantId() == userid) {
                 fullName = userRepository.findById(conversations.get(i).getCreatorId())
                         .orElse(new User())
                         .getFullName();
+                image = userRepository.findById(conversations.get(i).getCreatorId()).orElse(new User()).getImage();
             }
 
             List<Message> messages = messageService.allMessages(id);
             String lastMessage = messages.isEmpty() ? "No messages" : messages.getLast().getContent();
             String time = messages.isEmpty() ? "1970-01-01 00:00:00" : messages.getLast().getDateSending();
 
-            ConversationTitle ct = new ConversationTitle(id, fullName, lastMessage, time);
+            ConversationTitle ct = new ConversationTitle(id, fullName, lastMessage, time, image);
             conversationTitle.add(ct);
 
         }
