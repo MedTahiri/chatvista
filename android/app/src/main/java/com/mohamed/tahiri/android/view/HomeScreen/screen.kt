@@ -136,7 +136,7 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column {
+                    Column(modifier = Modifier.fillMaxWidth().weight(1f)) {
                         Text(
                             text = switch.value,
                             fontSize = MaterialTheme.typography.titleLarge.fontSize,
@@ -152,6 +152,7 @@ fun HomeScreen(
 
                     IconButton(
                         onClick = { navController.navigate(Screen.ProfileScreen.name) },
+                        modifier = Modifier.padding(16.dp,0.dp)
                     ) {
                         val imageResource =
                             imageMapper.getImage(currentUser.value.image) ?: R.drawable.a
