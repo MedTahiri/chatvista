@@ -45,8 +45,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -141,13 +143,13 @@ fun HomeScreen(
                             text = switch.value,
                             fontSize = MaterialTheme.typography.titleLarge.fontSize,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onBackground
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
                         )
-                        Text(
-                            text = "Hello, ${currentUser.value.fullName}",
-                            fontSize = MaterialTheme.typography.titleSmall.fontSize,
-                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
-                        )
+//                        Text(
+//                            text = "Hello, ${currentUser.value.fullName}",
+//                            fontSize = MaterialTheme.typography.titleSmall.fontSize,
+//                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+//                        )
                     }
 
                     IconButton(
@@ -186,9 +188,10 @@ fun HomeScreen(
                     onValueChange = { searchInMessage.value = it },
                     leadingIcon = {
                         Icon(
-                            imageVector = Icons.Default.Search,
+                            painter = painterResource(R.drawable.search),
                             contentDescription = "Search",
-                            tint = MaterialTheme.colorScheme.onBackground
+                            tint = MaterialTheme.colorScheme.onBackground,
+                            modifier = Modifier.size(24.dp)
                         )
                     },
                     placeholder = {
@@ -316,9 +319,10 @@ fun HomeScreen(
                     onValueChange = { searchInContact.value = it },
                     leadingIcon = {
                         Icon(
-                            imageVector = Icons.Default.Search,
+                            painter = painterResource(R.drawable.search),
                             contentDescription = "Search",
-                            tint = MaterialTheme.colorScheme.onBackground
+                            tint = MaterialTheme.colorScheme.onBackground,
+                            modifier = Modifier.size(24.dp)
                         )
                     },
                     placeholder = {
@@ -425,11 +429,12 @@ fun HomeScreen(
                         .weight(1f)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.AccountCircle,
+                        painter = painterResource(R.drawable.discussions),
                         contentDescription = "Discussions",
                         tint = if (switch.value == "Descussions") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimaryContainer.copy(
                             alpha = 0.6f
-                        )
+                        ),
+                        modifier = Modifier.size(24.dp)
                     )
                     Text(
                         text = "Discussions",
@@ -446,11 +451,12 @@ fun HomeScreen(
                         .weight(1f)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.AccountCircle,
+                        painter = painterResource(R.drawable.contacts),
                         contentDescription = "Contacts",
                         tint = if (switch.value == "Contacts") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimaryContainer.copy(
                             alpha = 0.6f
-                        )
+                        ),
+                        modifier = Modifier.size(24.dp)
                     )
                     Text(
                         text = "Contacts",

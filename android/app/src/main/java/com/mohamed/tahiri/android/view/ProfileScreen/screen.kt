@@ -34,9 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -49,7 +47,6 @@ import com.mohamed.tahiri.android.model.User
 import com.mohamed.tahiri.android.viewmodel.ApiState
 import com.mohamed.tahiri.android.viewmodel.DataStoreViewModel
 import com.mohamed.tahiri.android.viewmodel.UserViewModel
-import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,13 +58,13 @@ fun ProfileScreen(
     val userId by dataStoreViewModel.userId.collectAsState(initial = -1)
 
     val imageMapper = ImageMapper()
-    LaunchedEffect(userId) {
-        while (true) {
-            delay(2500)
-            userViewModel.getUserById(userId)
-        }
-    }
-
+//    LaunchedEffect(userId) {
+//        while (true) {
+//            delay(2500)
+//            userViewModel.getUserById(userId)
+//        }
+//    }
+    userViewModel.getUserById(userId)
     val currentUser = remember {
         mutableStateOf(
             User(

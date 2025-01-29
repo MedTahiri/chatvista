@@ -7,21 +7,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
-import com.google.gson.Gson
 import com.mohamed.tahiri.android.Screen
-import com.mohamed.tahiri.android.model.User
 import com.mohamed.tahiri.android.ui.theme.AndroidTheme
-import com.mohamed.tahiri.android.viewmodel.ApiState
 import com.mohamed.tahiri.android.viewmodel.DataStoreViewModel
 import com.mohamed.tahiri.android.viewmodel.UserViewModel
 
@@ -32,18 +26,7 @@ fun SplashScreen(
     userViewModel: UserViewModel
 ) {
     val userId by dataStoreViewModel.userId.collectAsState(initial = -1)
-//    val userState = userViewModel.user.value
-//    val currentUser = remember {
-//        mutableStateOf(
-//            User(
-//                id = -1,
-//                fullName = "",
-//                email = "",
-//                password = "",
-//                image = ""
-//            )
-//        )
-//    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -60,21 +43,12 @@ fun SplashScreen(
     }
     android.os.Handler().postDelayed({
         if (userId.toInt() <= 0) {
-//            userViewModel.getUserById(userId)
             navController.navigate(Screen.LoginScreen.name)
         } else {
             navController.navigate(Screen.HomeScreen.name)
         }
     }, 3000)
-//    LaunchedEffect(userState) {
-//        when (userState) {
-//            is ApiState.Success<*> -> {
-//                val user = (userState as ApiState.Success<User>).data
-//                currentUser.value = user
-//            }
-//            else -> {}
-//        }
-//    }
+
 }
 
 @Composable

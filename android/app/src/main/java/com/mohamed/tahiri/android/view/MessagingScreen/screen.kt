@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,14 +22,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -43,6 +47,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -65,7 +70,7 @@ import java.time.format.DateTimeFormatter
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MessagingScreen(
+fun MessagingScreen1(
     navController: NavHostController,
     messageViewModel: MessageViewModel,
     conversationViewModel: ConversationViewModel,
@@ -241,6 +246,218 @@ val imageMapper = ImageMapper()
     }
 
 
+}
+
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun MessagingScreen(
+    navController: NavHostController,
+    messageViewModel: MessageViewModel,
+    conversationViewModel: ConversationViewModel,
+    dataStoreViewModel: DataStoreViewModel,
+    conversationId: Long,
+    fullname: String,
+    image: String
+) {
+    var text by remember { mutableStateOf("") }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val userId by dataStoreViewModel.userId.collectAsState(-1)
+    val messagesState = messageViewModel.messages.value
+    val messageState = messageViewModel.message.value
+
+    val imageMapper = ImageMapper()
+
+    LaunchedEffect(conversationId) {
+        messageViewModel.getMessagesByConversation(conversationId)
+    }
+
+    LaunchedEffect(conversationId) {
+        while (true) {
+            delay(2500) // Wait for 2.5 seconds
+            messageViewModel.getMessagesByConversation(conversationId)
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        TopAppBar(
+            title = {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    val imageResource = imageMapper.getImage(image) ?: R.drawable.a
+                    Image(
+                        painter = painterResource(id = imageResource),
+                        contentDescription = "User Image",
+                        modifier = Modifier
+                            .size(48.dp)
+                            .clip(RoundedCornerShape(24.dp)),
+                        contentScale = ContentScale.Crop
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = fullname,
+                        fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
+            },
+            modifier = Modifier.fillMaxWidth(),
+            navigationIcon = {
+                IconButton(onClick = {
+                    navController.navigate(Screen.HomeScreen.name)
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.KeyboardArrowLeft,
+                        contentDescription = "Back",
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+        )
+
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp)
+        ) {
+            when (messagesState) {
+                is ApiState.Loading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+
+                is ApiState.Success<*> -> {
+                    val messages = (messagesState as ApiState.Success<List<Message>>).data
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        reverseLayout = true
+                    ) {
+                        items(messages.reversed()) { message ->
+                            val isFromMe = message.senderId.toInt() == userId.toInt()
+                            val bubbleColor = if (isFromMe) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
+                            val bubbleAlignment = if (isFromMe) Alignment.TopEnd else Alignment.TopStart
+
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp),
+                                contentAlignment = bubbleAlignment
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(16.dp))
+                                        .background(bubbleColor)
+                                        .padding(12.dp)
+                                ) {
+                                    Text(
+                                        text = message.content,
+                                        color = if (isFromMe) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
+                                        fontSize = 16.sp
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = message.dateSending,
+                                        color = if (isFromMe) MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f) else MaterialTheme.colorScheme.onSurface.copy(
+                                            alpha = 0.7f
+                                        ),
+                                        fontSize = 12.sp
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+
+                is ApiState.Error -> {
+                    val error = (messagesState as ApiState.Error).message
+                    InternetProblem(
+                        onRetry = {
+                            navController.navigate(Screen.MessagingScreen.name)
+                        },
+                        error = error
+                    )
+                }
+            }
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            OutlinedTextField(
+                value = text,
+                onValueChange = { text = it },
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 8.dp),
+                placeholder = { Text("Type a message...") },
+                shape = RoundedCornerShape(16.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline
+                )
+            )
+            Button(
+                onClick = {
+                    if (text.isNotBlank()) {
+                        messageViewModel.newMessage(
+                            newMessage(
+                                content = text,
+                                senderId = userId,
+                                dateSending = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                                    .format(LocalDateTime.now()),
+                                conversationId = conversationId,
+                            )
+                        )
+                        text = ""
+                        keyboardController?.hide()
+                    }
+                },
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                )
+            ) {
+                Text("Send")
+            }
+        }
+    }
+
+    LaunchedEffect(messageState) {
+        when (messageState) {
+            is ApiState.Error -> {}
+            is ApiState.Loading -> {}
+            is ApiState.Success -> {
+                messageViewModel.getMessagesByConversation(conversationId)
+            }
+        }
+    }
 }
 
 @Preview(showBackground = true)
