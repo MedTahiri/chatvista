@@ -33,7 +33,7 @@ public class ConversationService {
         conversations.addAll(conversationRepository.getAllByCreatorIdAndParticipantId(conversation.getCreatorId(), conversation.getParticipantId()));
         conversations.addAll(conversationRepository.getAllByCreatorIdAndParticipantId(conversation.getParticipantId(), conversation.getCreatorId()));
 
-        if (!conversations.isEmpty()) {
+        if (!conversations.isEmpty() || conversation.getCreatorId() == conversation.getParticipantId()) {
             return conversations.getFirst();
         }
 
