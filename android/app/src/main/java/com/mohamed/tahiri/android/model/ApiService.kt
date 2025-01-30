@@ -1,6 +1,7 @@
 package com.mohamed.tahiri.android.model
 
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -37,4 +38,8 @@ interface ApiService {
 
     @GET("message/my/{conversationId}")
     suspend fun getMessagesByConversation(@Path("conversationId") conversationId: Long): List<Message>
+
+    @DELETE("user/delete/{id}")
+    suspend fun deleteUser(@Path("id") id : Long)
+
 }

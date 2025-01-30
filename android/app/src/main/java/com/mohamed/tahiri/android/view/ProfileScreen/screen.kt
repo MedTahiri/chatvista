@@ -152,7 +152,6 @@ fun ProfileScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-
             OutlinedTextField(
                 value = name.value,
                 onValueChange = { name.value = it },
@@ -250,7 +249,11 @@ fun ProfileScreen(
 
 
             Button(
-                onClick = { /* Handle delete account action */ },
+                onClick = {
+//                    userViewModel.deleteUser(userId)
+//                    dataStoreViewModel.cleardataStoreRepository()
+//                    navController.navigate(Screen.SplashScreen.name)
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),

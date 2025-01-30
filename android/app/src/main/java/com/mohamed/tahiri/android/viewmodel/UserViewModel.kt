@@ -77,4 +77,15 @@ class UserViewModel @Inject constructor(private val apiService: ApiService) : Vi
         }
     }
 
+    fun deleteUser(id: Long) {
+        viewModelScope.launch {
+            try {
+                val response = apiService.deleteUser(id)
+                print(response)
+            } catch (e: Exception) {
+                print(e)
+            }
+        }
+    }
+
 }

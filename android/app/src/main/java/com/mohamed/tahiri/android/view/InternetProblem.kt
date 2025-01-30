@@ -39,7 +39,7 @@ fun InternetProblem(
     ) {
         // Display a placeholder icon (replace with your no-internet image or icon)
         Image(
-            painter = painterResource(id = R.drawable.ic_launcher_foreground), // Replace with your drawable resource
+            painter = painterResource(id = R.drawable.no_internet), // Replace with your drawable resource
             contentDescription = "No Internet",
             modifier = Modifier
                 .size(150.dp)
