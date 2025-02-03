@@ -42,10 +42,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -64,6 +65,7 @@ import com.mohamed.tahiri.android.viewmodel.ConversationViewModel
 import com.mohamed.tahiri.android.viewmodel.DataStoreViewModel
 import com.mohamed.tahiri.android.viewmodel.UserViewModel
 import kotlinx.coroutines.delay
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -122,6 +124,7 @@ fun HomeScreen(
     val searchInMessage = remember {
         mutableStateOf("")
     }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -130,45 +133,40 @@ fun HomeScreen(
         TopAppBar(
             title = {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column(modifier = Modifier.fillMaxWidth().weight(1f)) {
-                        Text(
-                            text = switch.value,
-                            fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-//                        Text(
-//                            text = "Hello, ${currentUser.value.fullName}",
-//                            fontSize = MaterialTheme.typography.titleSmall.fontSize,
-//                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
-//                        )
-                    }
 
-                    IconButton(
-                        onClick = { navController.navigate(Screen.ProfileScreen.name) },
-                        modifier = Modifier.padding(16.dp,0.dp)
-                    ) {
-                        val imageResource =
-                            imageMapper.getImage(currentUser.value.image) ?: R.drawable.a
-                        Image(
-                            painter = painterResource(id = imageResource),
-                            contentDescription = "User Image",
-                            modifier = Modifier
-                                .size(48.dp)
-                                .clip(RoundedCornerShape(24.dp)),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
+                    Text(
+                        text = switch.value,
+                        fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.background
+                    )
+
+                }
+            },
+            actions = {
+                IconButton(
+                    onClick = { navController.navigate(Screen.ProfileScreen.name) },
+                    modifier = Modifier.padding(8.dp, 0.dp)
+                ) {
+                    val imageResource =
+                        imageMapper.getImage(currentUser.value.image) ?: R.drawable.a
+                    Image(
+                        painter = painterResource(id = imageResource),
+                        contentDescription = "User Image",
+                        modifier = Modifier
+                            .size(48.dp)
+                            .clip(RoundedCornerShape(24.dp)),
+                        contentScale = ContentScale.Crop
+                    )
                 }
             },
             modifier = Modifier.fillMaxWidth(),
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                containerColor = MaterialTheme.colorScheme.primary,
                 titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
             )
         )
@@ -179,33 +177,6 @@ fun HomeScreen(
                     .padding(16.dp)
                     .weight(1f)
             ) {
-
-                OutlinedTextField(
-                    value = searchInMessage.value,
-                    onValueChange = { searchInMessage.value = it },
-                    leadingIcon = {
-                        Icon(
-                            painter = painterResource(R.drawable.search),
-                            contentDescription = "Search",
-                            tint = MaterialTheme.colorScheme.onBackground,
-                            modifier = Modifier.size(24.dp)
-                        )
-                    },
-                    placeholder = {
-                        Text(
-                            text = "Search for messages",
-                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
-                        )
-                    },
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 8.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = MaterialTheme.colorScheme.primary,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.outline
-                    )
-                )
 
                 when (conversationsState) {
                     is ApiState.Loading -> {
@@ -222,6 +193,32 @@ fun HomeScreen(
                     is ApiState.Success<*> -> {
                         val conversations =
                             (conversationsState as ApiState.Success<List<ConversationTitle>>).data
+                        OutlinedTextField(
+                            value = searchInMessage.value,
+                            onValueChange = { searchInMessage.value = it },
+                            leadingIcon = {
+                                Image(
+                                    painter = painterResource(R.drawable.search),
+                                    contentDescription = "Search",
+                                    //tint = MaterialTheme.colorScheme.onBackground,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            },
+                            placeholder = {
+                                Text(
+                                    text = "Search for messages",
+                                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
+                                )
+                            },
+                            shape = RoundedCornerShape(16.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 8.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outline
+                            )
+                        )
 
                         LazyColumn(modifier = Modifier.fillMaxSize()) {
                             items(conversations) { conversation ->
@@ -236,7 +233,7 @@ fun HomeScreen(
                                         },
                                     shape = RoundedCornerShape(16.dp),
                                     colors = CardDefaults.cardColors(
-                                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                                        containerColor = MaterialTheme.colorScheme.surface
                                     )
                                 ) {
                                     Row(
@@ -269,12 +266,12 @@ fun HomeScreen(
                                                     text = conversation.fullName,
                                                     fontSize = MaterialTheme.typography.titleMedium.fontSize,
                                                     fontWeight = FontWeight.Bold,
-                                                    color = MaterialTheme.colorScheme.onSurface
+                                                    color = MaterialTheme.colorScheme.onBackground
                                                 )
                                                 Text(
                                                     text = conversation.time,
                                                     fontSize = MaterialTheme.typography.bodySmall.fontSize,
-                                                    color = MaterialTheme.colorScheme.onSurface.copy(
+                                                    color = MaterialTheme.colorScheme.onBackground.copy(
                                                         alpha = 0.6f
                                                     )
                                                 )
@@ -283,7 +280,7 @@ fun HomeScreen(
                                             Text(
                                                 text = conversation.lastMessage,
                                                 fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                                                color = MaterialTheme.colorScheme.onSurface.copy(
+                                                color = MaterialTheme.colorScheme.onBackground.copy(
                                                     alpha = 0.8f
                                                 ),
                                                 maxLines = 1
@@ -299,44 +296,17 @@ fun HomeScreen(
                         val error = (conversationsState as ApiState.Error).message
                         InternetProblem(onRetry = {
                             navController.navigate(Screen.HomeScreen.name)
-                        }, error = error)
+                        })
                     }
                 }
             }
-
         } else {
-
             Column(
                 modifier = Modifier
                     .padding(16.dp)
                     .weight(1f)
             ) {
-                OutlinedTextField(
-                    value = searchInContact.value,
-                    onValueChange = { searchInContact.value = it },
-                    leadingIcon = {
-                        Icon(
-                            painter = painterResource(R.drawable.search),
-                            contentDescription = "Search",
-                            tint = MaterialTheme.colorScheme.onBackground,
-                            modifier = Modifier.size(24.dp)
-                        )
-                    },
-                    placeholder = {
-                        Text(
-                            text = "Search for contacts",
-                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
-                        )
-                    },
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 8.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = MaterialTheme.colorScheme.primary,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.outline
-                    )
-                )
+
 
                 when (usersState) {
                     is ApiState.Loading -> {
@@ -352,6 +322,32 @@ fun HomeScreen(
 
                     is ApiState.Success<*> -> {
                         val users = (usersState as ApiState.Success<List<User>>).data
+                        OutlinedTextField(
+                            value = searchInContact.value,
+                            onValueChange = { searchInContact.value = it },
+                            leadingIcon = {
+                                Image(
+                                    painter = painterResource(R.drawable.search),
+                                    contentDescription = "Search",
+                                    //tint = MaterialTheme.colorScheme.onBackground,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            },
+                            placeholder = {
+                                Text(
+                                    text = "Search for contacts",
+                                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
+                                )
+                            },
+                            shape = RoundedCornerShape(16.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 8.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outline
+                            )
+                        )
                         LazyColumn(modifier = Modifier.fillMaxSize()) {
                             items(users) { user ->
                                 Card(
@@ -364,7 +360,7 @@ fun HomeScreen(
                                         },
                                     shape = RoundedCornerShape(16.dp),
                                     colors = CardDefaults.cardColors(
-                                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                                        containerColor = MaterialTheme.colorScheme.surface
                                     )
                                 ) {
                                     Row(
@@ -389,7 +385,7 @@ fun HomeScreen(
                                             text = user.fullName,
                                             fontSize = MaterialTheme.typography.titleMedium.fontSize,
                                             fontWeight = FontWeight.Bold,
-                                            color = MaterialTheme.colorScheme.onSurface
+                                            color = MaterialTheme.colorScheme.onBackground
                                         )
                                     }
                                 }
@@ -397,12 +393,11 @@ fun HomeScreen(
                         }
                     }
 
-
                     is ApiState.Error -> {
                         val error = (usersState as ApiState.Error).message
                         InternetProblem(onRetry = {
                             navController.navigate(Screen.HomeScreen.name)
-                        }, error = error)
+                        })
                     }
                 }
             }
@@ -410,7 +405,7 @@ fun HomeScreen(
 
         BottomAppBar(
             modifier = Modifier.fillMaxWidth(),
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer
         ) {
             Row(
@@ -422,21 +417,23 @@ fun HomeScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                     modifier = Modifier
+                        .fillMaxSize()
                         .clickable { switch.value = "Descussions" }
                         .weight(1f)
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.discussions),
                         contentDescription = "Discussions",
-                        tint = if (switch.value == "Descussions") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimaryContainer.copy(
-                            alpha = 0.6f
+                        tint = if (switch.value == "Descussions") MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.background.copy(
+                            alpha = 0.5f
                         ),
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(30.dp)
+
                     )
                     Text(
                         text = "Discussions",
-                        color = if (switch.value == "Descussions") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimaryContainer.copy(
-                            alpha = 0.6f
+                        color = if (switch.value == "Descussions") MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.background.copy(
+                            alpha = 0.5f
                         )
                     )
                 }
@@ -444,21 +441,22 @@ fun HomeScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                     modifier = Modifier
+                        .fillMaxSize()
                         .clickable { switch.value = "Contacts" }
                         .weight(1f)
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.contacts),
                         contentDescription = "Contacts",
-                        tint = if (switch.value == "Contacts") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimaryContainer.copy(
-                            alpha = 0.6f
+                        tint = if (switch.value == "Contacts") MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.background.copy(
+                            alpha = 0.5f
                         ),
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(30.dp)
                     )
                     Text(
                         text = "Contacts",
-                        color = if (switch.value == "Contacts") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimaryContainer.copy(
-                            alpha = 0.6f
+                        color = if (switch.value == "Contacts") MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.background.copy(
+                            alpha = 0.5f
                         )
                     )
                 }
@@ -474,13 +472,13 @@ fun HomeScreen(
             title = {
                 Text(
                     text = "New Conversation",
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             },
             text = {
                 Text(
                     text = "Do you want to create a new conversation with ${contactSelected.value.fullName}?",
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
                 )
             },
             confirmButton = {
@@ -497,7 +495,7 @@ fun HomeScreen(
                 ) {
                     Text(
                         text = "Confirm",
-                        color = MaterialTheme.colorScheme.onPrimary
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
             },
@@ -509,12 +507,12 @@ fun HomeScreen(
                 ) {
                     Text(
                         text = "Dismiss",
-                        color = MaterialTheme.colorScheme.onPrimary
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
             },
             containerColor = MaterialTheme.colorScheme.surface,
-            textContentColor = MaterialTheme.colorScheme.onSurface
+            textContentColor = MaterialTheme.colorScheme.onBackground
         )
     }
 
@@ -530,24 +528,18 @@ fun HomeScreen(
 
             }
 
-            else -> {
-
-            }
+            else -> {}
         }
-
     }
+
     LaunchedEffect(userState) {
         when (userState) {
-            is ApiState.Loading -> {
-            }
-
             is ApiState.Success<*> -> {
                 val user = (userState as ApiState.Success<User>).data
                 currentUser.value = user
             }
 
-            is ApiState.Error -> {
-            }
+            else -> {}
         }
     }
 }

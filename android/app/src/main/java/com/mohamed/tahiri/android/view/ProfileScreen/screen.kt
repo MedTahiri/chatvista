@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -98,7 +99,7 @@ fun ProfileScreen(
             title = {
                 Text(
                     text = "Profile",
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    color = MaterialTheme.colorScheme.background,
                     fontSize = MaterialTheme.typography.titleLarge.fontSize,
                     fontWeight = FontWeight.Bold
                 )
@@ -111,14 +112,14 @@ fun ProfileScreen(
                     Icon(
                         imageVector = Icons.Default.KeyboardArrowLeft,
                         contentDescription = "Back",
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                        tint = MaterialTheme.colorScheme.background,
                         modifier = Modifier.size(32.dp)
                     )
                 }
             },
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                containerColor = MaterialTheme.colorScheme.primary,
+                titleContentColor = MaterialTheme.colorScheme.background
             )
         )
 
@@ -220,11 +221,19 @@ fun ProfileScreen(
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 )
             ) {
-                Text(
-                    text = "Logout",
-                    fontSize = MaterialTheme.typography.bodyLarge.fontSize,
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
+                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text(
+                        text = "Logout",
+                        fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                    Image(
+                        painter = painterResource(R.drawable.logout),
+                        contentDescription = "logout",
+                        modifier = Modifier.size(40.dp).padding(vertical = 8.dp)
+                    )
+                }
+
             }
 
 
@@ -240,11 +249,18 @@ fun ProfileScreen(
                     contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                 )
             ) {
-                Text(
-                    text = "SAVE",
-                    fontSize = MaterialTheme.typography.bodyLarge.fontSize,
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
+                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text(
+                        text = "Save",
+                        fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                    Image(
+                        painter = painterResource(R.drawable.save),
+                        contentDescription = "logout",
+                        modifier = Modifier.size(40.dp).padding(vertical = 8.dp)
+                    )
+                }
             }
 
 
@@ -263,11 +279,18 @@ fun ProfileScreen(
                     contentColor = MaterialTheme.colorScheme.onErrorContainer
                 )
             ) {
-                Text(
-                    text = "Delete My Account",
-                    fontSize = MaterialTheme.typography.bodyLarge.fontSize,
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
+                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text(
+                        text = "Delete My Account",
+                        fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                    Image(
+                        painter = painterResource(R.drawable.delete),
+                        contentDescription = "logout",
+                        modifier = Modifier.size(40.dp).padding(vertical = 8.dp)
+                    )
+                }
             }
         }
     }

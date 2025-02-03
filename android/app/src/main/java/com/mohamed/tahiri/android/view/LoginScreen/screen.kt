@@ -1,7 +1,7 @@
 package com.mohamed.tahiri.android.view.LoginScreen
 
 import android.content.Context
-import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,9 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -35,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -42,6 +40,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.mohamed.tahiri.android.R
 import com.mohamed.tahiri.android.Screen
 import com.mohamed.tahiri.android.model.User
 import com.mohamed.tahiri.android.ui.theme.AndroidTheme
@@ -61,7 +60,7 @@ fun LoginScreen(
     val userState = userViewModel.user.value
 
     var isPasswordVisible by remember { mutableStateOf(false) }
-
+    val error = remember { mutableStateOf("") }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -83,7 +82,7 @@ fun LoginScreen(
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.background
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = "Log In",
                 fontSize = MaterialTheme.typography.titleMedium.fontSize,
@@ -124,7 +123,7 @@ fun LoginScreen(
                     )
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(4.dp))
 
                 OutlinedTextField(
                     value = password.value,
@@ -138,8 +137,10 @@ fun LoginScreen(
                     visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
                         IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
-                            Icon(
-                                imageVector = if (isPasswordVisible) Icons.Default.Check else Icons.Default.Close,
+                            Image(
+                                painter = if (isPasswordVisible) painterResource(R.drawable.noeye) else painterResource(
+                                    R.drawable.eye
+                                ),
                                 contentDescription = if (isPasswordVisible) "Hide Password" else "Show Password"
                             )
                         }
@@ -150,8 +151,9 @@ fun LoginScreen(
                         unfocusedBorderColor = MaterialTheme.colorScheme.outline
                     )
                 )
-
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(text = error.value, color = MaterialTheme.colorScheme.error)
+                Spacer(modifier = Modifier.height(4.dp))
 
                 Button(
                     onClick = {
@@ -173,7 +175,7 @@ fun LoginScreen(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(4.dp))
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -186,7 +188,7 @@ fun LoginScreen(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(4.dp))
 
                 OutlinedButton(
                     onClick = {
@@ -219,11 +221,7 @@ fun LoginScreen(
             is ApiState.Success<*> -> {
                 val user = (userState as ApiState.Success<User>).data
                 if (user.fullName.isNullOrBlank() && user.email.isNullOrBlank()) {
-                    Toast.makeText(
-                        context,
-                        "Failed to log in: Your account does not exist!",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    error.value = "Failed to log in: Your account does not exist!"
                 } else {
                     dataStoreViewModel.saveUserId(user.id)
                     dataStoreViewModel.saveUserImage(user.image)
@@ -232,12 +230,8 @@ fun LoginScreen(
             }
 
             is ApiState.Error -> {
-                val error = (userState as ApiState.Error).message
-                Toast.makeText(
-                    context,
-                    "Failed to log in: $error",
-                    Toast.LENGTH_LONG
-                ).show()
+                val e = (userState as ApiState.Error).message
+                error.value = "Failed to log in: $e"
             }
         }
     }

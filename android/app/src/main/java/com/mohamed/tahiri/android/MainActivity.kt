@@ -37,6 +37,7 @@ class MainActivity : ComponentActivity() {
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
     private val conversationViewModel: ConversationViewModel by viewModels()
     private val messageViewModel: MessageViewModel by viewModels()
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -67,8 +68,7 @@ fun Main(
         composable(Screen.SplashScreen.name) {
             SplashScreen(
                 navController,
-                dataStoreViewModel,
-                userViewModel
+                dataStoreViewModel
             )
         }
         composable(Screen.SignupScreen.name) {

@@ -6,9 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,8 +25,7 @@ import com.mohamed.tahiri.android.ui.theme.AndroidTheme
 @Composable
 fun InternetProblem(
     modifier: Modifier = Modifier,
-    onRetry: () -> Unit,
-    error: String
+    onRetry: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -37,16 +34,14 @@ fun InternetProblem(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Display a placeholder icon (replace with your no-internet image or icon)
         Image(
-            painter = painterResource(id = R.drawable.no_internet), // Replace with your drawable resource
+            painter = painterResource(id = R.drawable.no_internet),
             contentDescription = "No Internet",
             modifier = Modifier
                 .size(150.dp)
                 .padding(bottom = 16.dp)
         )
 
-        // Title Text
         Text(
             text = "No Internet Connection",
             style = MaterialTheme.typography.titleLarge,
@@ -55,7 +50,6 @@ fun InternetProblem(
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
-        // Subtitle Text
         Text(
             text = "It looks like you're offline. Please check your connection and try again.",
             style = MaterialTheme.typography.bodyMedium,
@@ -64,22 +58,16 @@ fun InternetProblem(
             color = Color.Gray,
             modifier = Modifier.padding(bottom = 24.dp)
         )
-        Text(
-            text = error,
-            style = MaterialTheme.typography.bodySmall,
-            fontSize = 8.sp,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.error,
-            modifier = Modifier.padding(bottom = 24.dp)
-        )
 
-        // Retry Button
-        Button(
-            onClick = onRetry,
-            shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+        IconButton(
+            onClick = onRetry
         ) {
-            Text(text = "Retry", color = Color.White, fontSize = 16.sp)
+            Image(
+                painter = painterResource(R.drawable.retry),
+                contentDescription = "retry",
+                modifier = Modifier
+                    .size(50.dp)
+            )
         }
     }
 }
@@ -88,6 +76,6 @@ fun InternetProblem(
 @Preview
 fun Preview() {
     AndroidTheme {
-        InternetProblem(onRetry = {},error="")
+
     }
 }
