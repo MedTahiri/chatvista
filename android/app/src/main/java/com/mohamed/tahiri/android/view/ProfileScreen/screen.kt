@@ -45,6 +45,7 @@ import com.mohamed.tahiri.android.R
 import com.mohamed.tahiri.android.Screen
 import com.mohamed.tahiri.android.model.ImageMapper
 import com.mohamed.tahiri.android.model.User
+import com.mohamed.tahiri.android.model.newUser
 import com.mohamed.tahiri.android.viewmodel.ApiState
 import com.mohamed.tahiri.android.viewmodel.DataStoreViewModel
 import com.mohamed.tahiri.android.viewmodel.UserViewModel
@@ -59,12 +60,7 @@ fun ProfileScreen(
     val userId by dataStoreViewModel.userId.collectAsState(initial = -1)
 
     val imageMapper = ImageMapper()
-//    LaunchedEffect(userId) {
-//        while (true) {
-//            delay(2500)
-//            userViewModel.getUserById(userId)
-//        }
-//    }
+
     userViewModel.getUserById(userId)
     val currentUser = remember {
         mutableStateOf(
@@ -80,14 +76,13 @@ fun ProfileScreen(
 
     val userState = userViewModel.user.value
 
-    val name = remember {
-        mutableStateOf(currentUser.value.fullName)
-    }
-    val email = remember {
-        mutableStateOf(currentUser.value.email)
-    }
-    val password = remember {
-        mutableStateOf(currentUser.value.password)
+    val name = remember { mutableStateOf(currentUser.value.fullName) }
+    val email = remember { mutableStateOf(currentUser.value.email) }
+    val password = remember { mutableStateOf(currentUser.value.password) }
+    val image = remember { mutableStateOf(currentUser.value.image) }
+
+    val isSaveEnabled = remember {
+        mutableStateOf(false)
     }
 
     Column(
@@ -132,7 +127,7 @@ fun ProfileScreen(
             verticalArrangement = Arrangement.Top
         ) {
 
-            val imageResource = imageMapper.getImage(currentUser.value.image) ?: R.drawable.a
+            val imageResource = imageMapper.getImage(image.value) ?: R.drawable.a
             Image(
                 painter = painterResource(id = imageResource),
                 contentDescription = "User Image",
@@ -244,12 +239,22 @@ fun ProfileScreen(
 
 
             Button(
-                onClick = { /* Handle save action */ },
+                onClick = {
+                    val updatedUser = User(
+                        id = userId,
+                        fullName = name.value,
+                        email = email.value,
+                        password = password.value,
+                        image = image.value
+                    )
+                    userViewModel.updateUser(updatedUser)
+                    isSaveEnabled.value = false
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
                 shape = RoundedCornerShape(12.dp),
-                enabled = false,
+                enabled = isSaveEnabled.value,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     contentColor = MaterialTheme.colorScheme.onSecondaryContainer
@@ -333,4 +338,12 @@ fun ProfileScreen(
             }
         }
     }
+
+    LaunchedEffect(name.value, email.value, password.value, image.value) {
+        isSaveEnabled.value = name.value != currentUser.value.fullName ||
+                email.value != currentUser.value.email ||
+                password.value != currentUser.value.password ||
+                image.value != currentUser.value.image
+    }
+
 }

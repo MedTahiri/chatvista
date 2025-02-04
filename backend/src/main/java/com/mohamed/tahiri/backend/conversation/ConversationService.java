@@ -75,7 +75,9 @@ public class ConversationService {
                     participant.getFullName(),
                     lastMessage != null ? lastMessage.getDateSending() : "1970-01-01 00:00:00",
                     lastMessage != null ? lastMessage.getContent() : "No messages",
-                    participant.getImage()
+                    participant.getImage(),
+                    conversation.getCreatorId()
+
             );
         }
 
@@ -87,7 +89,9 @@ public class ConversationService {
                 participant.getFullName(),
                 "1970-01-01 00:00:00",
                 "No messages",
-                participant.getImage()
+                participant.getImage(),
+                conversation.getCreatorId()
+
         );
     }
 
@@ -117,7 +121,7 @@ public class ConversationService {
             String lastMessage = messages.isEmpty() ? "No messages" : messages.getLast().getContent();
             String time = messages.isEmpty() ? "1970-01-01 00:00:00" : messages.getLast().getDateSending();
 
-            ConversationTitle ct = new ConversationTitle(id, fullName, lastMessage, time, image);
+            ConversationTitle ct = new ConversationTitle(id, fullName, lastMessage, time, image, conversations.get(i).getCreatorId());
             conversationTitle.add(ct);
 
         }

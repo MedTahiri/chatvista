@@ -1,6 +1,8 @@
 package com.mohamed.tahiri.android.view.MessagingScreen
 
+import android.content.Context
 import android.os.Build
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -82,7 +84,8 @@ fun MessagingScreen(
     conversationId: Long,
     fullname: String,
     image: String,
-    admin: Long
+    admin: Long,
+    context: Context
 ) {
     var text by remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -204,7 +207,8 @@ fun MessagingScreen(
                                     .pointerInput(Unit) {
                                         detectTapGestures(
                                             onLongPress = { offset ->
-                                                menuVisibility = menuVisibility + (message.id to true)
+                                                menuVisibility =
+                                                    menuVisibility + (message.id to true)
                                                 menuPosition = offset
                                             }
                                         )
@@ -246,19 +250,33 @@ fun MessagingScreen(
                                     ) {
                                         DropdownMenuItem(
                                             onClick = {
-                                                messageViewModel.deleteMessage(message.id)
-                                                menuVisibility = menuVisibility - message.id
+                                                if (isFromMe) {
+                                                    messageViewModel.deleteMessage(message.id)
+                                                    menuVisibility = menuVisibility - message.id
+                                                } else {
+                                                    Toast.makeText(
+                                                        context,
+                                                        "you can't delete this message !",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                    menuVisibility = menuVisibility - message.id
+                                                }
                                             },
                                             text = {
                                                 Row(
                                                     horizontalArrangement = Arrangement.SpaceBetween,
                                                     verticalAlignment = Alignment.CenterVertically
                                                 ) {
-                                                    Text("Delete", modifier = Modifier.padding(vertical = 4.dp))
+                                                    Text(
+                                                        "Delete",
+                                                        modifier = Modifier.padding(vertical = 4.dp)
+                                                    )
                                                     Image(
                                                         painter = painterResource(R.drawable.delete_conversation),
                                                         contentDescription = "Delete message",
-                                                        modifier = Modifier.size(24.dp).padding(vertical = 4.dp)
+                                                        modifier = Modifier
+                                                            .size(24.dp)
+                                                            .padding(vertical = 4.dp)
                                                     )
                                                 }
                                             }

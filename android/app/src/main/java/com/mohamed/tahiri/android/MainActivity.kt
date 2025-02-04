@@ -117,7 +117,8 @@ fun Main(
                 conversationId,
                 fullname,
                 image,
-                admin
+                admin,
+                context
             )
         }
         composable(Screen.ProfileScreen.name) {
