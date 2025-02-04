@@ -1,7 +1,7 @@
 package com.mohamed.tahiri.backend.conversation;
 
 import com.mohamed.tahiri.backend.message.Message;
-import com.mohamed.tahiri.backend.message.MessageService;
+import com.mohamed.tahiri.backend.message.MessageRepository;
 import com.mohamed.tahiri.backend.user.User;
 import com.mohamed.tahiri.backend.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,22 +22,73 @@ public class ConversationService {
     private UserRepository userRepository;
 
     @Autowired
-    private MessageService messageService;
+    private MessageRepository messageRepository;
 
     public Conversation getConversationById(Long id) {
         return conversationRepository.findById(id).get();
     }
-
-    public Conversation createConversation(Conversation conversation) {
+/*
+    public ConversationTitle createConversation(Conversation conversation) {
         List<Conversation> conversations = new ArrayList<>();
         conversations.addAll(conversationRepository.getAllByCreatorIdAndParticipantId(conversation.getCreatorId(), conversation.getParticipantId()));
         conversations.addAll(conversationRepository.getAllByCreatorIdAndParticipantId(conversation.getParticipantId(), conversation.getCreatorId()));
 
         if (!conversations.isEmpty() || conversation.getCreatorId() == conversation.getParticipantId()) {
-            return conversations.getFirst();
+            //return conversations.getFirst();
+            return new ConversationTitle(conversations.getFirst().getId(),
+                    userRepository.findById(conversations.getFirst().getParticipantId()).get().getFullName(),
+                    messageService.allMessages(conversations.getFirst().getId()).getLast().getDateSending(),
+                    messageService.allMessages(conversations.getFirst().getId()).getLast().getContent(),
+                    userRepository.findById(conversations.getFirst().getParticipantId()).get().getImage()
+            );
         }
 
-        return conversationRepository.save(conversation);
+        //return conversationRepository.save(conversation);
+        return  new ConversationTitle(
+                conversationRepository.save(conversation).getId(),
+                userRepository.findById(conversationRepository.save(conversation).getParticipantId()).get().getFullName(),
+                messageService.allMessages(conversationRepository.save(conversation).getId()).getLast().getDateSending(),
+                messageService.allMessages(conversationRepository.save(conversation).getId()).getLast().getContent(),
+                userRepository.findById(conversationRepository.save(conversation).getParticipantId()).get().getImage()
+        );
+
+    }
+
+
+ */
+
+    public ConversationTitle createConversation(Conversation conversation) {
+        // Check if a conversation already exists between the creator and participant
+        List<Conversation> existingConversations = conversationRepository.getAllByCreatorIdAndParticipantId(conversation.getCreatorId(), conversation.getParticipantId());
+        existingConversations.addAll(conversationRepository.getAllByCreatorIdAndParticipantId(conversation.getParticipantId(), conversation.getCreatorId()));
+
+        if (!existingConversations.isEmpty() || conversation.getCreatorId().equals(conversation.getParticipantId())) {
+            Conversation existingConversation = existingConversations.getFirst();
+            User participant = userRepository.findById(existingConversation.getParticipantId())
+                    .orElseThrow(() -> new RuntimeException("Participant not found"));
+            ArrayList<Message> messages = new ArrayList<>();
+            messages.addAll(messageRepository.getAllByConversationId(existingConversation.getId()));
+            Message lastMessage = messages.isEmpty() ? null : messages.getLast();
+
+            return new ConversationTitle(
+                    existingConversation.getId(),
+                    participant.getFullName(),
+                    lastMessage != null ? lastMessage.getDateSending() : "1970-01-01 00:00:00",
+                    lastMessage != null ? lastMessage.getContent() : "No messages",
+                    participant.getImage()
+            );
+        }
+
+        Conversation savedConversation = conversationRepository.save(conversation);
+        User participant = userRepository.findById(savedConversation.getParticipantId())
+                .orElseThrow(() -> new RuntimeException("Participant not found"));
+        return new ConversationTitle(
+                savedConversation.getId(),
+                participant.getFullName(),
+                "1970-01-01 00:00:00",
+                "No messages",
+                participant.getImage()
+        );
     }
 
     public List<ConversationTitle> allConversations(Long userid) {
@@ -61,8 +112,8 @@ public class ConversationService {
                         .getFullName();
                 image = userRepository.findById(conversations.get(i).getCreatorId()).orElse(new User()).getImage();
             }
-
-            List<Message> messages = messageService.allMessages(id);
+            ArrayList<Message> messages = new ArrayList<>();
+            messages.addAll(messageRepository.getAllByConversationId(id));
             String lastMessage = messages.isEmpty() ? "No messages" : messages.getLast().getContent();
             String time = messages.isEmpty() ? "1970-01-01 00:00:00" : messages.getLast().getDateSending();
 
@@ -84,5 +135,14 @@ public class ConversationService {
 
 
         return conversationTitle;
+    }
+
+    public void deleteConversation(Long id) {
+        ArrayList<Message> messages = new ArrayList<>();
+        messages.addAll(messageRepository.getAllByConversationId(id));
+        for (Message message : messages) {
+            messageRepository.delete(message);
+        }
+        conversationRepository.deleteById(id);
     }
 }

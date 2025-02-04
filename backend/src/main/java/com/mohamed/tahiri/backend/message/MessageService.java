@@ -1,6 +1,5 @@
 package com.mohamed.tahiri.backend.message;
 
-import com.mohamed.tahiri.backend.conversation.ConversationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,5 +20,9 @@ public class MessageService {
         ArrayList<Message> messages = new ArrayList<>();
         messages.addAll(messageRepository.getAllByConversationId(conversationId));
         return messages;
+    }
+
+    public void deleteMessage(Long id) {
+        messageRepository.deleteById(id);
     }
 }

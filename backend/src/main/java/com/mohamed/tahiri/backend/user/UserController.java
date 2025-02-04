@@ -1,8 +1,14 @@
 package com.mohamed.tahiri.backend.user;
 
+import com.mohamed.tahiri.backend.conversation.ConversationService;
+import com.mohamed.tahiri.backend.message.Message;
+import com.mohamed.tahiri.backend.message.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -27,17 +33,17 @@ public class UserController {
     }
 
     @PostMapping("/new")
-    public User newUser(@RequestBody User user){
+    public User newUser(@RequestBody User user) {
         return userService.newUser(user);
     }
 
     @PutMapping("/update")
-    public User updateUser(@RequestBody User user){
+    public User updateUser(@RequestBody User user) {
         return userService.updateUser(user);
     }
 
     @DeleteMapping("/delete/{id}")
-    public void deleteUser(@PathVariable("id") Long id){
+    public void deleteUser(@PathVariable("id") Long id) {
         userService.deleteUser(id);
     }
 }

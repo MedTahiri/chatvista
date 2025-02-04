@@ -22,4 +22,9 @@ public class MessageController {
         return messageService.allMessages(conversationId);
     }
 
+    @DeleteMapping("/delete/{id}")
+    public void deleteMessage(@PathVariable("id") Long id) {
+        messageService.deleteMessage(id);
+    }
+
 }
