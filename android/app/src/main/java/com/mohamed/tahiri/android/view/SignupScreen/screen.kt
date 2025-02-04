@@ -17,7 +17,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -167,7 +166,8 @@ fun SignupScreen(
                                 painter = if (isPasswordVisible) painterResource(R.drawable.noeye) else painterResource(
                                     R.drawable.eye
                                 ),
-                                contentDescription = if (isPasswordVisible) "Hide Password" else "Show Password"
+                                contentDescription = if (isPasswordVisible) "Hide Password" else "Show Password",
+                                modifier = Modifier.padding(vertical = 8.dp)
                             )
                         }
                     },
@@ -198,7 +198,8 @@ fun SignupScreen(
                                 painter = if (isPasswordConfirmVisible) painterResource(R.drawable.noeye) else painterResource(
                                     R.drawable.eye
                                 ),
-                                contentDescription = if (isPasswordConfirmVisible) "Hide Password" else "Show Password"
+                                contentDescription = if (isPasswordConfirmVisible) "Hide Password" else "Show Password",
+                                modifier = Modifier.padding(vertical = 8.dp)
                             )
                         }
                     },

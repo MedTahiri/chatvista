@@ -142,7 +142,7 @@ fun LoginScreen(
                                     R.drawable.eye
                                 ),
                                 contentDescription = if (isPasswordVisible) "Hide Password" else "Show Password"
-                            )
+                            , modifier = Modifier.padding(vertical = 8.dp))
                         }
                     },
                     shape = RoundedCornerShape(12.dp),

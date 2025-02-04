@@ -21,14 +21,17 @@ class ConversationViewModel @Inject constructor(private val apiService: ApiServi
     private val _conversationByUser = mutableStateOf<ApiState<List<ConversationTitle>>>(ApiState.Loading)
     val conversationByUser: State<ApiState<List<ConversationTitle>>> = _conversationByUser
 
+    private val _conversationtitle = mutableStateOf<ApiState<ConversationTitle>>(ApiState.Loading)
+    val conversationtitle: State<ApiState<ConversationTitle>> = _conversationtitle
+
 
     fun newConversation(conversation: newConversation) {
         viewModelScope.launch {
             try {
                 val response = apiService.newConversation(conversation)
-                _conversation.value = ApiState.Success(response)
+                _conversationtitle.value = ApiState.Success(response)
             } catch (e: Exception) {
-                _conversation.value = ApiState.Error("Failed to create new conversation : $e")
+                _conversationtitle.value = ApiState.Error("Failed to create new conversation : $e")
             }
 
         }
@@ -57,6 +60,17 @@ class ConversationViewModel @Inject constructor(private val apiService: ApiServi
                 _conversationByUser.value = ApiState.Error("Failed to get conversation : $e")
             }
 
+        }
+    }
+
+    fun deleteConversation(id: Long) {
+        viewModelScope.launch {
+            try {
+                val response = apiService.deleteConversation(id)
+                print(response)
+            } catch (e: Exception) {
+                print(e)
+            }
         }
     }
 

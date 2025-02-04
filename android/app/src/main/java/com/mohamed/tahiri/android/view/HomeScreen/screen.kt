@@ -42,9 +42,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -53,7 +50,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.mohamed.tahiri.android.R
 import com.mohamed.tahiri.android.Screen
-import com.mohamed.tahiri.android.model.Conversation
 import com.mohamed.tahiri.android.model.ConversationTitle
 import com.mohamed.tahiri.android.model.ImageMapper
 import com.mohamed.tahiri.android.model.User
@@ -79,7 +75,6 @@ fun HomeScreen(
     val usersState = userViewModel.users.value
     val userState = userViewModel.user.value
     val conversationsState = conversationViewModel.conversationByUser.value
-    val conversationState = conversationViewModel.conversation.value
     val shouldShowDialog = remember { mutableStateOf(false) }
     val contactSelected = remember {
         mutableStateOf(
@@ -92,6 +87,7 @@ fun HomeScreen(
             )
         )
     }
+
     val userId by dataStoreViewModel.userId.collectAsState(-1)
     val currentUser = remember {
         mutableStateOf(
@@ -228,7 +224,7 @@ fun HomeScreen(
                                         .fillMaxWidth()
                                         .clickable {
                                             navController.navigate(
-                                                Screen.MessagingScreen.name + "/${conversation.id}/${conversation.fullName}/${conversation.image}"
+                                                Screen.MessagingScreen.name + "/${conversation.id}/${conversation.fullName}/${conversation.image}/${conversation.admin}"
                                             )
                                         },
                                     shape = RoundedCornerShape(16.dp),
@@ -490,6 +486,9 @@ fun HomeScreen(
                                 contactSelected.value.id
                             )
                         )
+                        switch.value = "Descussions"
+
+
                         shouldShowDialog.value = false
                     }
                 ) {
@@ -514,22 +513,6 @@ fun HomeScreen(
             containerColor = MaterialTheme.colorScheme.surface,
             textContentColor = MaterialTheme.colorScheme.onBackground
         )
-    }
-
-    LaunchedEffect(conversationState) {
-        when (conversationState) {
-            is ApiState.Success<*> -> {
-                val conversation = (conversationState as ApiState.Success<Conversation>).data
-
-            }
-
-            is ApiState.Error -> {
-                val error = (conversationState as ApiState.Error).message
-
-            }
-
-            else -> {}
-        }
     }
 
     LaunchedEffect(userState) {

@@ -221,7 +221,11 @@ fun ProfileScreen(
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 )
             ) {
-                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
                     Text(
                         text = "Logout",
                         fontSize = MaterialTheme.typography.bodyLarge.fontSize,
@@ -230,7 +234,9 @@ fun ProfileScreen(
                     Image(
                         painter = painterResource(R.drawable.logout),
                         contentDescription = "logout",
-                        modifier = Modifier.size(40.dp).padding(vertical = 8.dp)
+                        modifier = Modifier
+                            .size(40.dp)
+                            .padding(vertical = 8.dp)
                     )
                 }
 
@@ -249,7 +255,11 @@ fun ProfileScreen(
                     contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                 )
             ) {
-                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
                     Text(
                         text = "Save",
                         fontSize = MaterialTheme.typography.bodyLarge.fontSize,
@@ -258,7 +268,9 @@ fun ProfileScreen(
                     Image(
                         painter = painterResource(R.drawable.save),
                         contentDescription = "logout",
-                        modifier = Modifier.size(40.dp).padding(vertical = 8.dp)
+                        modifier = Modifier
+                            .size(40.dp)
+                            .padding(vertical = 8.dp)
                     )
                 }
             }
@@ -266,9 +278,9 @@ fun ProfileScreen(
 
             Button(
                 onClick = {
-//                    userViewModel.deleteUser(userId)
-//                    dataStoreViewModel.cleardataStoreRepository()
-//                    navController.navigate(Screen.SplashScreen.name)
+                    userViewModel.deleteUser(userId)
+                    dataStoreViewModel.cleardataStoreRepository()
+                    navController.navigate(Screen.SplashScreen.name)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -279,7 +291,11 @@ fun ProfileScreen(
                     contentColor = MaterialTheme.colorScheme.onErrorContainer
                 )
             ) {
-                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
                     Text(
                         text = "Delete My Account",
                         fontSize = MaterialTheme.typography.bodyLarge.fontSize,
@@ -288,7 +304,9 @@ fun ProfileScreen(
                     Image(
                         painter = painterResource(R.drawable.delete),
                         contentDescription = "logout",
-                        modifier = Modifier.size(40.dp).padding(vertical = 8.dp)
+                        modifier = Modifier
+                            .size(40.dp)
+                            .padding(vertical = 8.dp)
                     )
                 }
             }

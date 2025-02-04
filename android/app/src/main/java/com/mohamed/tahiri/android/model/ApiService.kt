@@ -25,7 +25,7 @@ interface ApiService {
 
 
     @POST("conversation/new")
-    suspend fun newConversation(@Body conversation: newConversation): Conversation
+    suspend fun newConversation(@Body conversation: newConversation): ConversationTitle
 
     @GET("conversation/{id}")
     suspend fun getConversationById(@Path("id") id: Long): Conversation
@@ -40,6 +40,12 @@ interface ApiService {
     suspend fun getMessagesByConversation(@Path("conversationId") conversationId: Long): List<Message>
 
     @DELETE("user/delete/{id}")
-    suspend fun deleteUser(@Path("id") id : Long)
+    suspend fun deleteUser(@Path("id") id: Long)
+
+    @DELETE("message/delete/{id}")
+    suspend fun deleteMessage(@Path("id") id: Long)
+
+    @DELETE("conversation/delete/{id}")
+    suspend fun deleteConversation(@Path("id") id: Long)
 
 }

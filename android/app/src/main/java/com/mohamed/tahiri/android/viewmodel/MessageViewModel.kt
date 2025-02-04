@@ -45,5 +45,16 @@ class MessageViewModel @Inject constructor(private val apiService: ApiService) :
         }
     }
 
+    fun deleteMessage(id: Long) {
+        viewModelScope.launch {
+            try {
+                val response = apiService.deleteMessage(id)
+                print(response)
+            } catch (e: Exception) {
+                print(e)
+            }
+        }
+    }
+
 
 }

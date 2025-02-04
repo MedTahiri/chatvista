@@ -97,16 +97,18 @@ fun Main(
             )
         }
         composable(
-            Screen.MessagingScreen.name + "/{conversationId}/{fullname}/{image}",
+            Screen.MessagingScreen.name + "/{conversationId}/{fullname}/{image}/{admin}",
             arguments = listOf(
                 navArgument("conversationId") { type = NavType.LongType },
                 navArgument("fullname") { type = NavType.StringType },
-                navArgument("image") { type = NavType.StringType }
+                navArgument("image") { type = NavType.StringType },
+                navArgument("admin") {type = NavType.LongType}
             )
         ) { backStackEntry ->
             val conversationId = backStackEntry.arguments?.getLong("conversationId") ?: -1
             val fullname = backStackEntry.arguments?.getString("fullname") ?: ""
             val image = backStackEntry.arguments?.getString("image") ?: "0"
+            val admin = backStackEntry.arguments?.getLong("admin") ?: -1
             MessagingScreen(
                 navController,
                 messageViewModel,
@@ -114,7 +116,8 @@ fun Main(
                 dataStoreViewModel,
                 conversationId,
                 fullname,
-                image
+                image,
+                admin
             )
         }
         composable(Screen.ProfileScreen.name) {
