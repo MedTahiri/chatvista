@@ -210,9 +210,9 @@ fun SignupScreen(
                     )
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(text = error.value, color = MaterialTheme.colorScheme.error)
-                Spacer(modifier = Modifier.height(4.dp))
+//                Spacer(modifier = Modifier.height(4.dp))
+//                Text(text = error.value, color = MaterialTheme.colorScheme.error)
+//                Spacer(modifier = Modifier.height(4.dp))
 
                 Button(
                     onClick = {

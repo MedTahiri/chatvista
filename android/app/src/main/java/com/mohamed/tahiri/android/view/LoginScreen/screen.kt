@@ -17,7 +17,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -151,9 +150,6 @@ fun LoginScreen(
                         unfocusedBorderColor = MaterialTheme.colorScheme.outline
                     )
                 )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(text = error.value, color = MaterialTheme.colorScheme.error)
-                Spacer(modifier = Modifier.height(4.dp))
 
                 Button(
                     onClick = {

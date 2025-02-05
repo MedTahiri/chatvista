@@ -11,4 +11,6 @@ public interface ConversationRepository extends JpaRepository<Conversation, Long
     List<Conversation> getAllByParticipantId(Long userid);
 
     List <Conversation> getAllByCreatorIdAndParticipantId(Long creatorId, Long participantId);
+
+    Conversation getConversationByCreatorId(Long creatorId);
 }

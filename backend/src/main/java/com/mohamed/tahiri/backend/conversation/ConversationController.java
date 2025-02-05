@@ -31,4 +31,9 @@ public class ConversationController {
         conversationService.deleteConversation(id);
     }
 
+    @GetMapping("/find/{userid}/{text}")
+    public List<ConversationTitle> findConversationByText(@PathVariable("userid") Long userid, @PathVariable("text") String text) {
+        return conversationService.findConversationByText(userid,text);
+    }
+
 }

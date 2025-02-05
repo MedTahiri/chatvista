@@ -69,4 +69,8 @@ public class UserService {
         }
         userRepository.deleteById(id);
     }
+
+    public List<User> findUsers(String text) {
+        return userRepository.findAllByFullNameContainsOrEmailContains(text, text);
+    }
 }

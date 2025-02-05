@@ -100,17 +100,6 @@ fun HomeScreen(
             )
         )
     }
-
-    val imageMapper = ImageMapper()
-    LaunchedEffect(userId) {
-        while (true) {
-            delay(2500)
-            userViewModel.fetchUsers()
-            conversationViewModel.getConversationByUser(userId)
-            userViewModel.getUserById(userId)
-        }
-    }
-
     val switch = remember {
         mutableStateOf("Descussions")
     }
@@ -119,6 +108,37 @@ fun HomeScreen(
     }
     val searchInMessage = remember {
         mutableStateOf("")
+    }
+
+    val imageMapper = ImageMapper()
+    LaunchedEffect(userId) {
+        while (true) {
+            delay(2500)
+            if (searchInContact.value.length == 0) {
+                userViewModel.fetchUsers()
+            }
+            if (searchInMessage.value.length == 0) {
+                conversationViewModel.getConversationByUser(userId)
+            }
+            userViewModel.getUserById(userId)
+        }
+    }
+
+    LaunchedEffect(searchInContact.value) {
+        if (searchInContact.value.length == 0) {
+            userViewModel.fetchUsers()
+        } else {
+
+            userViewModel.findUsers(searchInContact.value)
+        }
+    }
+
+    LaunchedEffect(searchInMessage.value) {
+        if (searchInMessage.value.length == 0) {
+            conversationViewModel.getConversationByUser(userId)
+        } else {
+            conversationViewModel.findConversation(userId, searchInMessage.value)
+        }
     }
 
     Column(
@@ -196,7 +216,6 @@ fun HomeScreen(
                                 Image(
                                     painter = painterResource(R.drawable.search),
                                     contentDescription = "Search",
-                                    //tint = MaterialTheme.colorScheme.onBackground,
                                     modifier = Modifier.size(24.dp)
                                 )
                             },
@@ -293,6 +312,9 @@ fun HomeScreen(
                         InternetProblem(onRetry = {
                             navController.navigate(Screen.HomeScreen.name)
                         })
+                        println("-------------------------------------------")
+                        println(error)
+                        println("-------------------------------------------")
                     }
                 }
             }
@@ -325,7 +347,6 @@ fun HomeScreen(
                                 Image(
                                     painter = painterResource(R.drawable.search),
                                     contentDescription = "Search",
-                                    //tint = MaterialTheme.colorScheme.onBackground,
                                     modifier = Modifier.size(24.dp)
                                 )
                             },
@@ -377,12 +398,24 @@ fun HomeScreen(
                                             contentScale = ContentScale.Crop
                                         )
                                         Spacer(modifier = Modifier.width(16.dp))
-                                        Text(
-                                            text = user.fullName,
-                                            fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                                            fontWeight = FontWeight.Bold,
-                                            color = MaterialTheme.colorScheme.onBackground
-                                        )
+                                        Column {
+                                            Text(
+                                                text = user.fullName,
+                                                fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                                                fontWeight = FontWeight.Bold,
+                                                color = MaterialTheme.colorScheme.onBackground
+                                            )
+                                            Spacer(modifier = Modifier.height(4.dp))
+                                            Text(
+                                                text = user.email,
+                                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                                color = MaterialTheme.colorScheme.onBackground.copy(
+                                                    alpha = 0.8f
+                                                ),
+                                                maxLines = 1
+                                            )
+                                        }
+
                                     }
                                 }
                             }

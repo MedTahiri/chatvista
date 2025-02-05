@@ -88,4 +88,15 @@ class UserViewModel @Inject constructor(private val apiService: ApiService) : Vi
         }
     }
 
+    fun findUsers(text : String){
+        viewModelScope.launch {
+            try {
+                val response = apiService.findUsers(text)
+                _users.value = ApiState.Success(response)
+            } catch (e: Exception) {
+                _users.value = ApiState.Error("Failed to fetch data : $e")
+            }
+        }
+    }
+
 }

@@ -7,4 +7,5 @@ import java.util.Collection;
 public interface MessageRepository extends JpaRepository<Message, Long> {
     Collection<? extends Message> getAllByConversationId(Long conversationId);
 
+    Collection<? extends Message> findAllByContentContains(String content);
 }

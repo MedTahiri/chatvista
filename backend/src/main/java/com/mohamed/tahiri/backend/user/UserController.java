@@ -46,4 +46,10 @@ public class UserController {
     public void deleteUser(@PathVariable("id") Long id) {
         userService.deleteUser(id);
     }
+
+    @GetMapping("/find/{text}")
+    public List<User> findUserByText(@PathVariable("text") String text) {
+        return userService.findUsers(text);
+    }
+
 }

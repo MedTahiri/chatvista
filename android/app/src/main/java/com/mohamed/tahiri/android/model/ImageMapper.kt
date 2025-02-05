@@ -22,5 +22,9 @@ class ImageMapper {
         return images[key]
     }
 
+    public fun getAllImage() : Set<Map.Entry<String, Int>> {
+        return images.entries
+    }
+
 }
 

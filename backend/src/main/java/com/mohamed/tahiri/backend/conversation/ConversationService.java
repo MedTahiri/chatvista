@@ -149,4 +149,34 @@ public class ConversationService {
         }
         conversationRepository.deleteById(id);
     }
+
+    public List<ConversationTitle> findConversationByText(Long userid, String text) {
+        ArrayList<Message> messages = new ArrayList<>();
+        messages.addAll(messageRepository.findAllByContentContains(text));
+        ArrayList<ConversationTitle> conversationTitle = new ArrayList<>();
+        for (Message message : messages) {
+            if (message.getContent().contains(text)) {
+                Long id = message.getConversationId();
+                String fullName = "";
+                String image = "0";
+                Conversation conversation = conversationRepository.findById(id).get();
+                if (conversation.getCreatorId() == userid) {
+                    fullName = userRepository.findById(conversation.getParticipantId()).orElse(new User()).getFullName();
+                    image = userRepository.findById(conversation.getParticipantId()).orElse(new User()).getImage();
+                } else if (conversation.getParticipantId() == userid) {
+                    fullName = userRepository.findById(conversation.getCreatorId()).orElse(new User()).getFullName();
+                    image = userRepository.findById(conversation.getCreatorId()).orElse(new User()).getImage();
+                }
+                String lastMessage = message.getContent();
+                String time = message.getDateSending();
+                conversationTitle.add(new ConversationTitle(id, fullName, lastMessage, time, image, conversation.getCreatorId()));
+
+            } else {
+                continue;
+            }
+
+        }
+        return conversationTitle;
+    }
+
 }

@@ -48,4 +48,10 @@ interface ApiService {
     @DELETE("conversation/delete/{id}")
     suspend fun deleteConversation(@Path("id") id: Long)
 
+    @GET("user/find/{text}")
+    suspend fun findUsers(@Path("text") text : String) : List<User>
+
+    @GET("conversation/find/{userId}/{text}")
+    suspend fun findConversation(@Path("userId") userId: Long , @Path("text") text: String) : List<ConversationTitle>
+
 }
