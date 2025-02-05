@@ -3,6 +3,7 @@ package com.mohamed.tahiri.android.view.HomeScreen
 import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -113,7 +114,7 @@ fun HomeScreen(
     val imageMapper = ImageMapper()
     LaunchedEffect(userId) {
         while (true) {
-            delay(2500)
+            delay(1500)
             if (searchInContact.value.length == 0) {
                 userViewModel.fetchUsers()
             }
@@ -245,11 +246,17 @@ fun HomeScreen(
                                             navController.navigate(
                                                 Screen.MessagingScreen.name + "/${conversation.id}/${conversation.fullName}/${conversation.image}/${conversation.admin}"
                                             )
-                                        },
+                                        }
+                                        .border(
+                                            if (conversation.isAllRead || conversation.lastSender == userId) 0.dp else 2.dp,
+                                            if (conversation.isAllRead || conversation.lastSender == userId) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.primary,
+                                            RoundedCornerShape(16.dp)
+                                        ),
                                     shape = RoundedCornerShape(16.dp),
                                     colors = CardDefaults.cardColors(
                                         containerColor = MaterialTheme.colorScheme.surface
                                     )
+
                                 ) {
                                     Row(
                                         modifier = Modifier

@@ -33,7 +33,7 @@ class MessageViewModel @Inject constructor(private val apiService: ApiService) :
         }
     }
 
-    fun getMessagesByConversation(conversationId : Long){
+    fun getMessagesByConversation(conversationId: Long) {
         viewModelScope.launch {
             try {
                 val response = apiService.getMessagesByConversation(conversationId)
@@ -49,6 +49,17 @@ class MessageViewModel @Inject constructor(private val apiService: ApiService) :
         viewModelScope.launch {
             try {
                 val response = apiService.deleteMessage(id)
+                print(response)
+            } catch (e: Exception) {
+                print(e)
+            }
+        }
+    }
+
+    fun read(conversation: Long, currentuser: Long) {
+        viewModelScope.launch {
+            try {
+                val response = apiService.read(conversation, currentuser)
                 print(response)
             } catch (e: Exception) {
                 print(e)

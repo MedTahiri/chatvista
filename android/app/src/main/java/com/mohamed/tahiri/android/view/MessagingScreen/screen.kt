@@ -97,12 +97,19 @@ fun MessagingScreen(
 
     LaunchedEffect(conversationId) {
         messageViewModel.getMessagesByConversation(conversationId)
+        if (userId.toInt() != -1) {
+            messageViewModel.read(conversationId, userId)
+        }
     }
+
 
     LaunchedEffect(conversationId) {
         while (true) {
-            delay(2500) // Wait for 2.5 seconds
+            delay(1500) // Wait for 2.5 seconds
             messageViewModel.getMessagesByConversation(conversationId)
+            if (userId.toInt() != -1) {
+                messageViewModel.read(conversationId, userId)
+            }
         }
     }
 
@@ -331,6 +338,7 @@ fun MessagingScreen(
                                 dateSending = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
                                     .format(LocalDateTime.now()),
                                 conversationId = conversationId,
+                                isRead = false
                             )
                         )
                         text = ""

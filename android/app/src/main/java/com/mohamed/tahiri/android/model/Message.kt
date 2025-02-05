@@ -7,5 +7,6 @@ data class Message(
     val content: String,
     val dateSending: String,
     val senderId: Long,
-    val conversationId: Long
+    val conversationId: Long,
+    val isRead : Boolean,
 )

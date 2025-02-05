@@ -54,4 +54,7 @@ interface ApiService {
     @GET("conversation/find/{userId}/{text}")
     suspend fun findConversation(@Path("userId") userId: Long , @Path("text") text: String) : List<ConversationTitle>
 
+    @PUT("message/read/{conversation}/{currentuser}")
+    suspend fun read(@Path("conversation") conversation: Long,@Path("currentuser") currentuser:Long)
+
 }

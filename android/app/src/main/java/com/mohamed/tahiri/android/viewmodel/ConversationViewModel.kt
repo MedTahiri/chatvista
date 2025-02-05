@@ -18,7 +18,8 @@ class ConversationViewModel @Inject constructor(private val apiService: ApiServi
     private val _conversation = mutableStateOf<ApiState<Conversation>>(ApiState.Loading)
     val conversation: State<ApiState<Conversation>> = _conversation
 
-    private val _conversationByUser = mutableStateOf<ApiState<List<ConversationTitle>>>(ApiState.Loading)
+    private val _conversationByUser =
+        mutableStateOf<ApiState<List<ConversationTitle>>>(ApiState.Loading)
     val conversationByUser: State<ApiState<List<ConversationTitle>>> = _conversationByUser
 
     private val _conversationtitle = mutableStateOf<ApiState<ConversationTitle>>(ApiState.Loading)
@@ -73,5 +74,17 @@ class ConversationViewModel @Inject constructor(private val apiService: ApiServi
             }
         }
     }
+
+    fun findConversation(userId: Long, text: String) {
+        viewModelScope.launch {
+            try {
+                val response = apiService.findConversation(userId, text)
+                _conversationByUser.value = ApiState.Success(response)
+            } catch (e: Exception) {
+                _conversationByUser.value = ApiState.Error("Failed to fetch data : $e")
+            }
+        }
+    }
+
 
 }

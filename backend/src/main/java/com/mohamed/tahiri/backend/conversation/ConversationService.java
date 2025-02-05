@@ -76,7 +76,9 @@ public class ConversationService {
                     lastMessage != null ? lastMessage.getDateSending() : "1970-01-01 00:00:00",
                     lastMessage != null ? lastMessage.getContent() : "No messages",
                     participant.getImage(),
-                    conversation.getCreatorId()
+                    conversation.getCreatorId(),
+                    lastMessage.getIsRead(),
+                    lastMessage.getSenderId()
 
             );
         }
@@ -90,6 +92,8 @@ public class ConversationService {
                 "1970-01-01 00:00:00",
                 "No messages",
                 participant.getImage(),
+                conversation.getCreatorId(),
+                true,
                 conversation.getCreatorId()
 
         );
@@ -120,8 +124,9 @@ public class ConversationService {
             messages.addAll(messageRepository.getAllByConversationId(id));
             String lastMessage = messages.isEmpty() ? "No messages" : messages.getLast().getContent();
             String time = messages.isEmpty() ? "1970-01-01 00:00:00" : messages.getLast().getDateSending();
-
-            ConversationTitle ct = new ConversationTitle(id, fullName, lastMessage, time, image, conversations.get(i).getCreatorId());
+            Boolean isRead = messages.isEmpty() ? null : messages.getLast().getIsRead();
+            Long lastSenderId = messages.isEmpty() ? null : messages.getLast().getSenderId();
+            ConversationTitle ct = new ConversationTitle(id, fullName, lastMessage, time, image, conversations.get(i).getCreatorId(), isRead, lastSenderId);
             conversationTitle.add(ct);
 
         }
@@ -169,7 +174,7 @@ public class ConversationService {
                 }
                 String lastMessage = message.getContent();
                 String time = message.getDateSending();
-                conversationTitle.add(new ConversationTitle(id, fullName, lastMessage, time, image, conversation.getCreatorId()));
+                conversationTitle.add(new ConversationTitle(id, fullName, lastMessage, time, image, conversation.getCreatorId(), message.getIsRead(),message.getSenderId()));
 
             } else {
                 continue;

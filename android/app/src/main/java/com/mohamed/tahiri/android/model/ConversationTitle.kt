@@ -6,5 +6,7 @@ data class ConversationTitle(
     val lastMessage: String,
     val time: String,
     val image: String,
-    val admin: Long
+    val admin: Long,
+    val isAllRead: Boolean,
+    val lastSender:Long
 )
