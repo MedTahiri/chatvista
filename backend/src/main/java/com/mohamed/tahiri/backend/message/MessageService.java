@@ -25,4 +25,20 @@ public class MessageService {
     public void deleteMessage(Long id) {
         messageRepository.deleteById(id);
     }
+
+    public void readMessage(Long conversationId, Long currentUser) {
+        ArrayList<Message> messages = new ArrayList<>();
+        List<Message> result = messageRepository.getAllByConversationIdAndIsRead(conversationId, false);
+        for (Message message : result) {
+            if (message.getSenderId() != currentUser) {
+                messages.add(message);
+            }
+        }
+        for (Message message : messages) {
+            Message newMessage = message;
+            newMessage.setIsRead(true);
+            messageRepository.save(newMessage);
+
+        }
+    }
 }

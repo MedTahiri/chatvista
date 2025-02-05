@@ -15,16 +15,18 @@ public class Message {
     private String dateSending;
     private Long senderId;
     private Long conversationId;
+    private Boolean isRead;
 
     public Message() {
 
     }
 
-    public Message(String content, String dateSending, Long senderId, Long conversationId) {
+    public Message(String content, String dateSending, Long senderId, Long conversationId, Boolean isRead) {
         this.content = content;
         this.dateSending = dateSending;
         this.senderId = senderId;
         this.conversationId = conversationId;
+        this.isRead = isRead;
     }
 
     public Long getId() {
@@ -66,4 +68,12 @@ public class Message {
     public void setConversationId(Long conversationId) {
         this.conversationId = conversationId;
     }
+
+    public Boolean getIsRead() {
+        return isRead;
+    }
+    public void setIsRead(Boolean isRead) {
+        this.isRead = isRead;
+    }
+
 }

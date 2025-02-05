@@ -27,4 +27,9 @@ public class MessageController {
         messageService.deleteMessage(id);
     }
 
+    @PutMapping("/read/{conversation}/{currentuser}")
+    public void readMessage(@PathVariable("conversation") Long conversationId,@PathVariable("currentuser") Long currentUser) {
+        messageService.readMessage(conversationId,currentUser);
+    }
+
 }
