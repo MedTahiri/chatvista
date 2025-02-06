@@ -77,8 +77,7 @@ Open Android Studio and select the android directory.
 <domain includeSubdomains="true">backend API URL</domain>
 ```
 
-- 
-Use "http://localhost:8080" if testing on a physical device with a local backend server
+- Use "http://localhost:8080" if testing on a physical device with a local backend server
 
 4️⃣ Build & Run
 
