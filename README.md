@@ -189,4 +189,6 @@ git push origin feature/your-feature-name
 
 ---
 
-# Thank you for using ChatVista! 🚀
+<p align="center">
+Thank you for using ChatVista! 🚀
+</p>
