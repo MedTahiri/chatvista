@@ -5,22 +5,31 @@
 ---
 
 # 📸 Screenshots
-
-<img src="screenshots/1.jpg" alt="1" height="700">
-<img src="screenshots/2.jpg" alt="2" height="700">
-<img src="screenshots/3.jpg" alt="3" height="700">
-<img src="screenshots/4.jpg" alt="4" height="700">
-<img src="screenshots/5.jpg" alt="5" height="700">
-<img src="screenshots/6.jpg" alt="6" height="700">
-<img src="screenshots/7.jpg" alt="7" height="700">
-<img src="screenshots/8.jpg" alt="8" height="700">
-<img src="screenshots/9.jpg" alt="9" height="700">
-<img src="screenshots/10.jpg" alt="10" height="700">
-<img src="screenshots/11.jpg" alt="11" height="700">
-<img src="screenshots/12.jpg" alt="12" height="700">
-<img src="screenshots/13.jpg" alt="13" height="700">
-<img src="screenshots/14.jpg" alt="14" height="700">
-<img src="screenshots/15.jpg" alt="15" height="700">
+<p align="center">
+<img src="screenshots/1.jpg" alt="1" height="500">
+<img src="screenshots/2.jpg" alt="2" height="500">
+<img src="screenshots/3.jpg" alt="3" height="500">
+</p>
+<p align="center">
+<img src="screenshots/4.jpg" alt="4" height="500">
+<img src="screenshots/5.jpg" alt="5" height="500">
+<img src="screenshots/6.jpg" alt="6" height="500">
+</p>
+<p align="center">
+<img src="screenshots/7.jpg" alt="7" height="500">
+<img src="screenshots/8.jpg" alt="8" height="500">
+<img src="screenshots/9.jpg" alt="9" height="500">
+</p>
+<p align="center">
+<img src="screenshots/10.jpg" alt="10" height="500">
+<img src="screenshots/11.jpg" alt="11" height="500">
+<img src="screenshots/12.jpg" alt="12" height="500">
+</p>
+<p align="center">
+<img src="screenshots/13.jpg" alt="13" height="500">
+<img src="screenshots/14.jpg" alt="14" height="500">
+<img src="screenshots/15.jpg" alt="15" height="500">
+</p>
 
 ---
 
