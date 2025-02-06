@@ -3,9 +3,7 @@
 <img src="screenshots/chatvista.png" alt="1" height="500">
 </p>
 
-<p align="center" style="font-size: 50px;font-style: normal">
-    ChatVista - Real-Time Chat Application
-</p>
+# ChatVista - Real-Time Chat Application
 
 - ChatVista is a modern chat application designed for seamless and secure messaging. Built with an**Android frontend**and a**Spring Boot backend**, it offers real-time communication, user authentication, and a smooth user experience.
 
